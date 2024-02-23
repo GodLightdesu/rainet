@@ -82,6 +82,7 @@ class Game:
   def DrawGameState(self, surface, view='god'):
     self.drawBoard(surface, view)
     self.drawGameInfo(surface, self.Yellow, self.Blue)
+    self.drawSquare(surface, view)
   
   def drawBoard(self, surface, view):
     surface.blit(IMAGES['BG'], (0, 0))
@@ -129,3 +130,50 @@ class Game:
     surface.blit(yellowInfo, textLocation)
     
   
+    
+  def drawSquare(self, surface, view):
+    # god view or yellow view
+    if view == 'god':
+      # draw yellow pieces in server
+      if len(self.Yellow.serverStack) != 0:
+        for y in range(len(self.Yellow.serverStack)):
+          piece = self.Yellow.serverStack[y]
+
+          img = py.image.load(piece.texture)
+          img_center = 28 + y * SQ_SIZE + SQ_SIZE//2, 95+YSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
+      
+      # draw blue pieces in server
+      if len(self.Blue.serverStack) != 0:
+        for b in range(len(self.Blue.serverStack)):
+          piece = self.Blue.serverStack[b]
+          
+          img = py.image.load(piece.texture)
+          img_center = 28 + b * SQ_SIZE + SQ_SIZE//2, 95+BSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
+      
+      # draw board
+      for row in range(ROWS):
+        for col in range(COLS):
+          # draw fire wall
+          if self.board.squares[row][col].has_fw():
+            fw = self.board.squares[row][col].fw
+            img = py.image.load(fw.texture)
+            surface.blit(img, (32.5+col*SQ_SIZE, 100+row*SQ_SIZE))
+            surface.blit(IMAGES['shield'], (23+col*SQ_SIZE, 86+row*SQ_SIZE))
+          
+          # draw piece
+          if self.board.squares[row][col].has_piece():
+            piece = self.board.squares[row][col].piece
+
+            img = py.image.load(piece.texture)
+            img_center = 28+col*SQ_SIZE + SQ_SIZE//2, 95+row*SQ_SIZE + SQ_SIZE//2
+            piece.texture_rect = img.get_rect(center=img_center)
+            surface.blit(img, piece.texture_rect)
+            
+            if piece.lb:
+              surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
+            if piece.checked:
+              surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
