@@ -82,7 +82,6 @@ class Game:
   def DrawGameState(self, surface, view='god'):
     self.drawBoard(surface, view)
     self.drawGameInfo(surface, self.Yellow, self.Blue)
-    self.drawSquare(surface, view)
   
   def drawBoard(self, surface, view):
     surface.blit(IMAGES['BG'], (0, 0))
@@ -127,6 +126,7 @@ class Game:
     
     yellowInfo = font.render(text, 0, py.Color('black'))
     textLocation = py.Rect(330, 840, WIDTH/5, 70)
+<<<<<<< HEAD
     surface.blit(yellowInfo, textLocation)
     
   
@@ -177,3 +177,6 @@ class Game:
               surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
             if piece.checked:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
+=======
+    surface.blit(yellowInfo, textLocation)
+>>>>>>> parent of 911cb43 (add function drawSquare)
