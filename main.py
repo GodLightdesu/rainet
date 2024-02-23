@@ -70,7 +70,9 @@ class Main:
         pass
       
       # render game
+      game.message = 'test'
       game.DrawGameState(screen)
+      game.drawText(screen, game.message)
       
       self.clock.tick(MAX_FPS)
       py.display.flip()

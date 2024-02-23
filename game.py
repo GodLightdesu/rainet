@@ -60,3 +60,12 @@ class Game:
       surface.blit(IMAGES['b_top'], (0, 0))
       surface.blit(IMAGES['b_board'], (0, 71))
       surface.blit(IMAGES['b_bottom'], (0, 817))
+      
+  def drawText(self, surface, text):
+    font = py.font.SysFont("font/SoukouMincho.ttf", 40, False, False)
+    # font = py.font.SysFont("arial", 40, False, False)
+    textObject = font.render(text, 0, py.Color('white'))
+    textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
+    surface.blit(textObject, textLocation)
+    
+  
