@@ -76,4 +76,29 @@ class Game:
     textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
     surface.blit(textObject, textLocation)
     
+  def drawGameInfo(self, surface, Yellow, Blue):
+    font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
+    
+    text = 'yellow' if Yellow.name is None else Yellow.name
+    yellowInfo = font.render(text, 0, py.Color('black'))
+    textLocation = py.Rect(5, 837, WIDTH/5, 70)
+    surface.blit(yellowInfo, textLocation)
+    
+    text = 'blue' if Blue.name is None else Blue.name
+    blueInfo = font.render(text, 0, py.Color('black'))
+    textLocation = py.Rect(530, 837, WIDTH/5, 70)
+    surface.blit(blueInfo, textLocation)
+    
+    font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 40, True, False)
   
+    text = 'link: ' + str(Yellow.link_eat) + ' virus: ' + str(Yellow.virus_eat)
+    
+    yellowInfo = font.render(text, 0, py.Color('black'))
+    textLocation = py.Rect(110, 840, WIDTH/5, 70)
+    surface.blit(yellowInfo, textLocation)
+    
+    text = 'link: ' + str(Blue.link_eat) + ' virus: ' + str(Blue.virus_eat)
+    
+    yellowInfo = font.render(text, 0, py.Color('black'))
+    textLocation = py.Rect(330, 840, WIDTH/5, 70)
+    surface.blit(yellowInfo, textLocation)
