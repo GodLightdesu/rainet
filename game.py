@@ -1,6 +1,8 @@
 import pygame as py
 import os
 
+from player import Player
+
 from const import *
 
 class Game:
@@ -14,6 +16,12 @@ class Game:
     
     self.next_player = 'yellow'
     self.humanMove = True
+    
+    self.Yellow = Player('yellow', yellowID)
+    self.Blue = Player('blue', blueID)
+    self.players = [self.Yellow, self.Blue]
+    self.player = self.players[(self.turn + 1) % 2]
+    self.enemy = self.players[self.turn % 2]
     
     # move init
     self.moveMade = False
