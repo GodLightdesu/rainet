@@ -57,6 +57,7 @@ class Game:
   # display method
   def DrawGameState(self, surface, view='god'):
     self.drawBoard(surface, view)
+    self.drawGameInfo(surface, self.Yellow, self.Blue)
   
   def drawBoard(self, surface, view):
     surface.blit(IMAGES['BG'], (0, 0))
