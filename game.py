@@ -126,10 +126,7 @@ class Game:
     
     yellowInfo = font.render(text, 0, py.Color('black'))
     textLocation = py.Rect(330, 840, WIDTH/5, 70)
-<<<<<<< HEAD
-    surface.blit(yellowInfo, textLocation)
-    
-  
+    surface.blit(yellowInfo, textLocation)    
     
   def drawSquare(self, surface, view):
     # god view or yellow view
@@ -177,6 +174,3 @@ class Game:
               surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
             if piece.checked:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
-=======
-    surface.blit(yellowInfo, textLocation)
->>>>>>> parent of 911cb43 (add function drawSquare)
