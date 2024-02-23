@@ -2,12 +2,17 @@ import pygame as py
 import os
 
 from player import Player
+from board import Board
 
 from const import *
+from square import *
+from piece import *
 
 class Game:
   
   def __init__(self, yellowInit, blueInit, yellowID=None, blueID=None) -> None:
+    self.board = Board()
+    
     # game init
     self.message = ''
     self.gameOver = False
@@ -31,6 +36,25 @@ class Game:
     self.useSkill = False
     self.skillUsed = False
     self.undoSkill = False
+    
+    # piece init
+    i = 0
+    for row, col in POS_INIT['yellow']:
+      if yellowInit[i] == 'l':
+        self.board.squares[row][col] = Square(row, col, Link('yellow'))
+        i += 1
+      elif yellowInit[i] == 'v':
+        self.board.squares[row][col] = Square(row, col, Virus('yellow'))
+        i += 1
+    
+    i = 0
+    for row, col in POS_INIT['blue']:
+      if blueInit[i] == 'l':
+        self.board.squares[row][col] = Square(row, col, Link('blue'))
+        i += 1
+      elif blueInit[i] == 'v':
+        self.board.squares[row][col] = Square(row, col, Virus('blue'))
+        i += 1  
     
   def loadImages(self):
     IMAGES['BG'] = py.transform.scale(py.image.load("assets/images/BG.png"), (750, HEIGHT))
@@ -103,3 +127,5 @@ class Game:
     yellowInfo = font.render(text, 0, py.Color('black'))
     textLocation = py.Rect(330, 840, WIDTH/5, 70)
     surface.blit(yellowInfo, textLocation)
+    
+  
