@@ -83,6 +83,7 @@ class Game:
     self.drawBoard(surface, view)
     self.drawGameInfo(surface, self.Yellow, self.Blue)
     self.drawSquare(surface, view)
+    self.drawSkills(surface, self.Yellow, self.Blue)
   
   def drawBoard(self, surface, view):
     surface.blit(IMAGES['BG'], (0, 0))
@@ -175,3 +176,18 @@ class Game:
               surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
             if piece.checked:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
+
+  def drawSkills(self, surface, Yellow, Blue):
+    # will display constantly
+    surface.blit(IMAGES['blue_fw'], (38+9*SQ_SIZE, 103.5+3*SQ_SIZE))
+    surface.blit(IMAGES['blue_lb'], (38+9*SQ_SIZE, 103.5+4*SQ_SIZE))
+    
+    surface.blit(IMAGES['yellow_lb'], (38+9*SQ_SIZE, 103.5+5*SQ_SIZE))
+    surface.blit(IMAGES['yellow_fw'], (38+9*SQ_SIZE, 103.5+6*SQ_SIZE))
+    
+    if not Yellow.skills['vc']['used']: surface.blit(IMAGES['yellow_vc'], (38+9*SQ_SIZE, 103.5+7*SQ_SIZE))
+    if not Yellow.skills['404']['used']: surface.blit(IMAGES['yellow_404'], (38+9*SQ_SIZE, 103.5+8*SQ_SIZE))
+    
+    if not Blue.skills['vc']['used']: surface.blit(IMAGES['blue_vc'], (38+9*SQ_SIZE, 103.5+2*SQ_SIZE))
+    if not Blue.skills['404']['used']: surface.blit(IMAGES['blue_404'], (38+9*SQ_SIZE, 103.5+1*SQ_SIZE))
+    
