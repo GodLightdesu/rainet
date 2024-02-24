@@ -46,7 +46,29 @@ class Skill:
     else: return False
     
   def useFW(self) -> bool:
-    return True
+    row, col = self.target0
+    # targetSq = self.board.squares[row][col]
+    
+    # used fw, uninstall fw
+    if self.player.skills['fw']['used'] and self.target0 == self.player.skills['fw']['log'][-1]:
+      
+      self.board.squares[row][col].fw = None
+      self.player.skills['fw']['used'] = False
+      self.player.skills['fw']['log'].append((row, col))
+      return True
+    
+    # not use fw and valid target
+    elif (not self.player.skills['fw']['used'] and
+          self.target0 not in NONFWPOS and 
+          not self.board.squares[row][col].has_enemy_piece(self.player.color)):
+      
+      self.board.squares[row][col].fw = FireWall(self.player.color)
+      self.player.skills['fw']['used'] = True
+      self.player.skills['fw']['log'].append((row, col))
+      return True
+    
+    # invalid target
+    else: return False
 
   def useVC(self) -> bool:
     # VirusChecker(color)
