@@ -13,9 +13,77 @@ class Board:
     self._add_Piece('yellow')
     self._add_Piece('blue')
   
+  def isEnterServer(self, player, endSq):
+    return endSq.is_ally_exit(player.color)
+  
+  def enterServer(self, player, piece):
+    if piece.lb:
+      player.skillUsed['lb'] = False
+
+    # non lb piece
+    if piece.name == 'link':  player.link_enter += 1
+    elif piece.name == 'virus': player.virus_enter += 1
+    
+    player.serverStack.append(piece)
+    
+  def leaveServer(self):
+    pass
+  
+  def capturePiece(self, player, enemy, enemyPiece):
+    # lb piece
+    if enemyPiece.lb:
+      enemy.skillUsed['lb'] = False
+
+    # non lb piece
+    if enemyPiece.name == 'link':  player.link_eat += 1
+    elif enemyPiece.name == 'virus': player.virus_eat += 1
+  
+  def unCapturePiece(self):
+    pass
+    
+  def add_moveToPiece(self, piece, startRow, startCol, endRow, endCol):
+    # create asquares for the new move
+    startSq = self.squares[startRow][startCol]
+    endSq = self.squares[endRow][endCol]
+    # create new move
+    move = Move(startSq, endSq)
+    # apeend new valid move
+    piece.add_move(move)
+  
   # move method
   def move(self, player, enemy, piece, move):
-    pass
+    startsq = move.startsq
+    endsq = move.endsq
+    
+    startPiece = self.squares[startsq.row][startsq.col].piece
+    endPiece = self.squares[endsq.row][endsq.col].piece
+    
+    # game info update
+    if self.isEnterServer(player, endsq): # enter server
+      self.enterServer(player, piece)
+    
+    if endsq.has_enemy_piece(player.color): # end square is enemy piece
+      self.capturePiece(player, enemy, endPiece)
+      
+    # console board move update
+    self.squares[startsq.row][startsq.col].piece = None
+    
+    if not self.isEnterServer(player, endsq):  self.squares[endsq.row][endsq.col].piece = piece
+    else: self.squares[endsq.row][endsq.col].piece = None
+    
+    # print(self.squares[startsq.row][startsq.col].piece)
+    # print(self.squares[endsq.row][endsq.col].piece)
+
+    # move
+    piece.move = True
+    
+    # clear valid moves
+    piece.clear_moves()
+    
+    # set last move
+    player.moveLog.append(move)
+    self.moveLog.append(move)
+    
   
   def validMove(self, piece, move):
     return move in piece.moves
@@ -55,13 +123,7 @@ class Board:
       for possible_move in possible_moves:
         endRow, endCol = possible_move
         if isValidMove(endRow, endCol):
-          # create asquares for the new move
-          startSq = Square(startRow, startCol)
-          endSq = Square(endRow, endCol)
-          # create new move
-          move = Move(startSq, endSq)
-          # apeend new valid move
-          piece.add_move(move)
+          self.add_moveToPiece(piece, startRow, startCol, endRow, endCol)
     
     def LB_move():
       pass    

@@ -89,12 +89,11 @@ class Main:
               move = Move(startsq, endsq)
               if board.validMove(clicker.piece, move):
                 
-                # print(move.moveID)
                 board.move(game.player, game.enemy, clicker.piece, move)
-                # game.moveMade = True
+                game.moveMade = True
               
               # else: print('Invalid move')
-              clicker.unselect_piece()
+              clicker.unselect_piece()  # unselect piece either moved or not
             
             # if clicked square has a piece ? -> move
             elif (board.onBoard(clicked_row, clicked_col) and 
@@ -125,7 +124,13 @@ class Main:
       
       # game logic
       if not game.gameOver:
-        pass
+        
+        # human
+        if game.moveMade:
+          game.message = f'Moved: {move.getNotation()}'
+          game.switch_player()
+          move = None
+          game.moveMade = False
       
       # render game
       # game.message = 'test'
