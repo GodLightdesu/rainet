@@ -56,44 +56,63 @@ class Main:
         # mouse handler
         elif event.type == py.MOUSEBUTTONDOWN:
           if not game.gameOver:
-            clicker.update_mouse(event.pos)
+            clicker.updateMouse(event.pos)
             clicked_row, clicked_col = clicker.getRowCol()
             print(clicked_row, clicked_col)
             
-            # cancel use skill
+            # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
               print('cancel use skill')
               game.whichSkill = None
               game.useSkill = False
             
-            # skills' col -> check which skill is clicked
-            elif clicked_col == 9 and game.moveMade == False:
+            # skills' col -> check which skill is clicked when player not choosed to use skill
+            elif clicked_col == 9 and game.moveMade == False and game.useSkill == False:
+              # not display the valid moves of selected piece if skill selected
+              if clicker.selected_piece:
+                clicker.piece.clear_moves()
+              
               if game.player.color == 'yellow' and 5 <= clicked_row <= 8:
                 game.whichSkill = YSKILLSROW[clicked_row]
               elif  game.player.color == 'blue' and 1 <= clicked_row <= 4:
                 game.whichSkill = BSKILLSROW[clicked_row]
               
-              if game.whichSkill is not None:  game.useSkill = True
-              else: game.useSkill = False
+              # not clicked in skills
+              if game.whichSkill is None:  game.useSkill = False
+              else: game.useSkill = True
               print(game.whichSkill)
             
-            # use skill (which)
+            # use skill (which) when player choosed to use skill
             elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
               print('use skill')
-              # clicker.save_initial(event.pos)
+              clicker.savePlayerClicks(clicked_row, clicked_col)
               
-              # # need two click
-              # if game.whichSkill == '404':
-              #   target0 = (clicker.initial_col, clicker.initial_row)
-              #   target1 = (clicked_row, clicked_col)
-              #   game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0, target1)
+              # need two clicks
+              if game.whichSkill == '404':
+                if len(clicker.playerClicks) == 2:
+                  target0 = clicker.playerClicks[0]
+                  target1 = clicker.playerClicks[1]
+                  game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0, target1)
+                  clicker.claerPlayerClicks()
+                
+                  # not valid target
+                  if not game.skillUsed:
+                    clicker.claerPlayerClicks()
+                    game.whichSkill = None
+                    game.useSkill = False
               
-              # # only need one click
-              # else:
-              #   target0 = (clicker.initial_col, clicker.initial_row)
-              #   game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0)
-            
-            
+              # only need one click
+              else:
+                target0 = (clicked_row, clicked_col)
+                game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0)
+                clicker.claerPlayerClicks()
+                
+                # not valid target
+                if not game.skillUsed:
+                  clicker.claerPlayerClicks()
+                  game.whichSkill = None
+                  game.useSkill = False
+
             
             # after selected piece and clicked square to move
             elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
@@ -108,24 +127,24 @@ class Main:
                 game.moveMade = True
               
               # else: print('Invalid move')
-              clicker.unselect_piece()  # unselect piece either moved or not
+              
+              # not display the valid moves of selected piece
+              clicker.piece.clear_moves()
+              clicker.unselectPiece()  # unselect piece either moved or not
             
             # if clicked square has a piece ? -> move
             elif (board.onBoard(clicked_row, clicked_col) and 
                   game.useSkill == False and game.skillUsed == False and 
                   board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
               
-              # clicked the same piece twice
-              if (clicked_row, clicked_col) == (clicker.initial_row, clicker.initial_col):
-                print('clicked twice')
-                clicker.unselect_piece()
-              
               # select piece
-              else:
-                piece = board.squares[clicked_row][clicked_col].piece   
-                board.calc_moves(piece, clicked_row, clicked_col)
-                clicker.save_initial(event.pos)
-                clicker.select_piece(piece)
+              piece = board.squares[clicked_row][clicked_col].piece   
+              board.calc_moves(piece, clicked_row, clicked_col)
+              clicker.saveInitial(event.pos)
+              clicker.selectPiece(piece)
+                
+            # debug
+            # print(game.useSkill, game.skillUsed, game.moveMade)
         
         # key handler
         elif event.type == py.KEYDOWN:
@@ -144,7 +163,8 @@ class Main:
         if game.moveMade:
           game.message = f'Moved: {move.getNotation()}'
           game.switchPlayer()
-          
+        
+        # used skill
         elif game.skillUsed:
           game.message = f'Used: {game.whichSkill}'
           game.switchPlayer()
