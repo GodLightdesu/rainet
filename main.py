@@ -50,7 +50,6 @@ class Main:
           sys.exit()
 
          # mouse handler
-       
         elif event.type == py.MOUSEBUTTONDOWN:
           if not game.gameOver:
             pass
@@ -65,14 +64,22 @@ class Main:
           if event.key == py.K_r:
             pass
       
+      
+      
       # game logic
       if not game.gameOver:
         pass
       
       # render game
-      game.message = 'test'
+      # game.message = 'test'
       game.DrawGameState(screen)
       game.drawText(screen, game.message)
+      
+      # check winner
+      winner = game.checkGameOver()
+      if winner is not None:
+        game.message = winner + ' wins'
+        game.gameOver = True
       
       self.clock.tick(MAX_FPS)
       py.display.flip()

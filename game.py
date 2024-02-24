@@ -191,3 +191,33 @@ class Game:
     if not Blue.skills['vc']['used']: surface.blit(IMAGES['blue_vc'], (38+9*SQ_SIZE, 103.5+2*SQ_SIZE))
     if not Blue.skills['404']['used']: surface.blit(IMAGES['blue_404'], (38+9*SQ_SIZE, 103.5+1*SQ_SIZE))
     
+  # game method
+  def reset(self, yellowInit, blueInit, yellowID, blueID):
+    self.__init__(yellowInit, blueInit, yellowID, blueID)
+    
+  def checkGameOver(self):
+    yLink = self.Yellow.link_eat + self.Yellow.link_enter
+    yVirus = self.Yellow.virus_eat + self.Yellow.virus_enter
+    bLink = self.Blue.link_eat + self.Blue.link_enter
+    bVirus = self.Blue.virus_eat + self.Blue.virus_enter
+    
+    if yLink == 4 or bVirus == 4:
+      if self.Yellow.name is not None:  return self.Yellow.name
+      else: return self.Yellow.color
+    elif bLink == 4 or yVirus == 4:
+      if self.Blue.name is not None:  return self.Blue.name
+      else: return self.Blue.color
+    else: return None
+    
+  def switch_player(self):
+    self.turn += 1
+    self.player = self.players[(self.turn + 1) % 2]
+    self.enemy = self.players[self.turn % 2]
+    # print(self.player.color)
+    
+    self.moveMade = False
+
+    self.whichSkill = None
+    self.useSkill = False
+    self.skillUsed = False
+    self.undoSkill = False
