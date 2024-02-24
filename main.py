@@ -4,6 +4,7 @@ from pygame.locals import *
 from const import *
 from game import Game
 from move import Move
+import skill
 
 import sys
 
@@ -60,13 +61,13 @@ class Main:
             print(clicked_row, clicked_col)
             
             # cancel use skill
-            if clicked_col > 7 and game.useSkill == True:
+            if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
               print('cancel use skill')
               game.whichSkill = None
               game.useSkill = False
             
             # skills' col -> check which skill is clicked
-            elif clicked_col == 9:
+            elif clicked_col == 9 and game.moveMade == False:
               if game.player.color == 'yellow' and 5 <= clicked_row <= 8:
                 game.whichSkill = YSKILLSROW[clicked_row]
               elif  game.player.color == 'blue' and 1 <= clicked_row <= 4:
@@ -77,11 +78,25 @@ class Main:
               print(game.whichSkill)
             
             # use skill (which)
-            elif clicked_col <= 7 and game.useSkill == True and game.moveMade == False:
+            elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
               print('use skill')
+              # clicker.save_initial(event.pos)
+              
+              # # need two click
+              # if game.whichSkill == '404':
+              #   target0 = (clicker.initial_col, clicker.initial_row)
+              #   target1 = (clicked_row, clicked_col)
+              #   game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0, target1)
+              
+              # # only need one click
+              # else:
+              #   target0 = (clicker.initial_col, clicker.initial_row)
+              #   game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0)
+            
+            
             
             # after selected piece and clicked square to move
-            elif clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
+            elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
               
               startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
               endsq = game.board.squares[clicked_row][clicked_col]
@@ -129,8 +144,11 @@ class Main:
         if game.moveMade:
           game.message = f'Moved: {move.getNotation()}'
           game.switchPlayer()
-          move = None
-          game.moveMade = False
+          
+        elif game.skillUsed:
+          game.message = f'Used: {game.whichSkill}'
+          game.switchPlayer()
+          
       
       # render game
       # game.message = 'test'

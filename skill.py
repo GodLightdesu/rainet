@@ -38,12 +38,12 @@ def use(board: object, player: object, which: str, target0: tuple, target1: tupl
     '404' :  use404
   }
   
-  row, col = target0
-  targetSq = board.squares[row][col]
+  # row, col = target0
+  # targetSq = board.squares[row][col]
   
 
   if which == '404' and target1 is None: return False
-  elif len(target0) != 2:  return False
+  # elif len(target0) != 2:  return False
   else: # valid target
     used = skills[which]()
     if used: 
