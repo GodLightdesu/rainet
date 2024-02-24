@@ -10,9 +10,6 @@ class FireWall():
     self.texture = texture
     self.set_texture()
   
-  def __init__(self, color) -> None:
-    super().__init__('fw', color)
-  
   def set_texture(self):
     self.texture = os.path.join(
       f'assets/images/{self.color}_{self.name}.png')
@@ -28,7 +25,25 @@ class Skill:
     }
   
   def useLB(self) -> bool:
-    return True
+    row, col = self.target0
+    targetSq = self.board.squares[row][col]
+    
+    if self.player.skills['lb']['used'] and self.target0 == self.player.skills['lb']['log'][-1]:
+      
+      self.board.squares[row][col].piece.lb = False
+      self.player.skills['lb']['used'] = False
+      self.player.skills['lb']['log'].append((row, col))
+      return True
+    
+    # not use lb and valid target
+    elif not self.player.skills['lb']['used'] and targetSq.has_ally_piece(self.player.color):
+      self.board.squares[row][col].piece.lb = True
+      self.player.skills['lb']['used'] = True
+      self.player.skills['lb']['log'].append((row, col))
+      return True
+    
+    # invalid target
+    else: return False
     
   def useFW(self) -> bool:
     return True
@@ -42,8 +57,10 @@ class Skill:
     return True
 
   def use(self, board: object, player: object, which: str, target0: tuple, target1: tuple=None) -> bool:
-    # row, col = target0
-    # targetSq = board.squares[row][col]
+    self.board = board
+    self.player = player
+    self.target0 = target0
+    self.target1 = target1
     
     if which == '404' and target1 is None: return False
     # elif len(target0) != 2:  return False

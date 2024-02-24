@@ -4,7 +4,7 @@ from pygame.locals import *
 from const import *
 from game import Game
 from move import Move
-import skill
+from skill import Skill
 
 import sys
 
@@ -25,6 +25,8 @@ class Main:
     self.yellowID = yellowID
     self.blueID = blueID
     
+    self.skill = Skill()
+    
     # only do this once, before the while loop
     self.game.loadImages()
 
@@ -43,6 +45,7 @@ class Main:
     game = self.game
     board = self.game.board
     clicker = self.game.clicker
+    skill = self.skill
     
     while True:
       # handle human input data
