@@ -39,6 +39,7 @@ class Main:
   def Gback(self):
     screen = self.screen
     game = self.game
+    board = self.game.board
     clicker = self.game.clicker
     
     while True:
@@ -55,7 +56,38 @@ class Main:
           if not game.gameOver:
             clicker.update_mouse(event.pos)
             clicked_row, clicked_col = clicker.getRowCol()
-            print(clicked_row, clicked_col)
+            # print(clicked_row, clicked_col)
+            
+            # cancel use skill
+            if clicked_col > 7 and game.useSkill == True:
+              print('cancel use skill')
+              game.whichSkill = None
+              game.useSkill = False
+            
+            # skills' col -> check which skill is clicked
+            elif clicked_col == 9:
+              if game.player.color == 'yellow' and 5 <= clicked_row <= 8:
+                game.whichSkill = YSKILLSROW[clicked_row]
+              elif  game.player.color == 'blue' and 1 <= clicked_row <= 4:
+                game.whichSkill = BSKILLSROW[clicked_row]
+              
+              if game.whichSkill is not None:  game.useSkill = True
+              else: game.useSkill = False
+              print(game.whichSkill)
+            
+            # use skill (which)
+            elif clicked_col <= 7 and game.useSkill == True and game.moveMade == False:
+              print('use skill')
+            
+            # if clicked square has a piece ?
+            elif (clicked_col <= 7 and 
+                  game.useSkill == False and game.skillUsed == False and
+                  board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
+              print('move')
+            
+            # no ally piece
+            else: print('not ally piece')
+            
         
         # key handler
         elif event.type == py.KEYDOWN:
