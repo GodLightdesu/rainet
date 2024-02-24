@@ -83,7 +83,10 @@ class Board:
     # set last move
     player.moveLog.append(move)
     self.moveLog.append(move)
+
+  def undoMove(self):
     
+    pass  
   
   def validMove(self, piece, move):
     return move in piece.moves
