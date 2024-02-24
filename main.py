@@ -3,6 +3,7 @@ from pygame.locals import *
 
 from const import *
 from game import Game
+from move import Move
 
 import sys
 
@@ -56,7 +57,7 @@ class Main:
           if not game.gameOver:
             clicker.update_mouse(event.pos)
             clicked_row, clicked_col = clicker.getRowCol()
-            # print(clicked_row, clicked_col)
+            print(clicked_row, clicked_col)
             
             # cancel use skill
             if clicked_col > 7 and game.useSkill == True:
@@ -79,17 +80,38 @@ class Main:
             elif clicked_col <= 7 and game.useSkill == True and game.moveMade == False:
               print('use skill')
             
-            # if clicked square has a piece ?
-            elif (clicked_col <= 7 and 
-                  game.useSkill == False and game.skillUsed == False and
-                  board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
-              print('move')
-              validMoves = game.getValidMoves()
+            # after selected piece and clicked square to move
+            elif clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
               
+              startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
+              endsq = game.board.squares[clicked_row][clicked_col]
               
-            # no ally piece
-            else: print('not ally piece')
+              move = Move(startsq, endsq)
+              if board.validMove(clicker.piece, move):
+                
+                # print(move.moveID)
+                board.move(game.player, game.enemy, clicker.piece, move)
+                # game.moveMade = True
+              
+              # else: print('Invalid move')
+              clicker.unselect_piece()
             
+            # if clicked square has a piece ? -> move
+            elif (board.onBoard(clicked_row, clicked_col) and 
+                  game.useSkill == False and game.skillUsed == False and 
+                  board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
+              
+              # clicked the same piece twice
+              if (clicked_row, clicked_col) == (clicker.initial_row, clicker.initial_col):
+                print('clicked twice')
+                clicker.unselect_piece()
+              
+              # select piece
+              else:
+                piece = board.squares[clicked_row][clicked_col].piece   
+                board.calc_moves(piece, clicked_row, clicked_col)
+                clicker.save_initial(event.pos)
+                clicker.select_piece(piece)
         
         # key handler
         elif event.type == py.KEYDOWN:

@@ -12,9 +12,13 @@ class Board:
     self._create()
     self._add_Piece('yellow')
     self._add_Piece('blue')
-    
-  def move(self):
+  
+  # move method
+  def move(self, player, enemy, piece, move):
     pass
+  
+  def validMove(self, piece, move):
+    return move in piece.moves
   
   def calc_moves(self, piece: object, startRow: int, startCol: int):
     '''
@@ -66,6 +70,10 @@ class Board:
     if piece.lb: LB_move()
     # non lb piece
     else: nonLB_move()
+    
+  # other method
+  def onBoard(self, row, col) -> bool:
+    return 0 <= row <= 9 and 0 <= col <= 7
     
   # private method (_methodName)
   def _create(self):
