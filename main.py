@@ -7,7 +7,7 @@ from game import Game
 import sys
 
 class Main:
-  def __init__(self, yellowInit, blueInit, yellowID=None, blueID=None) -> None:
+  def __init__(self, yellowInit:str, blueInit:str, yellowID:str=None, blueID:str=None) -> None:
     if (self.checkPieceInit(yellowInit) == False or 
         self.checkPieceInit(blueInit) == False):
       raise ValueError('Invalid piece init, please try again')
@@ -26,7 +26,7 @@ class Main:
     # only do this once, before the while loop
     self.game.loadImages()
 
-  def checkPieceInit(self, pieceInit):
+  def checkPieceInit(self, pieceInit:str):
     v, l = 0, 0
     for piece in pieceInit:
       if piece == 'v':  v += 1

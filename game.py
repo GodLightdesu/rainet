@@ -11,7 +11,7 @@ from piece import *
 
 class Game:
   
-  def __init__(self, yellowInit, blueInit, yellowID=None, blueID=None) -> None:
+  def __init__(self, yellowInit:str, blueInit:str, yellowID:str=None, blueID:str=None) -> None:
     self.board = Board()
     self.clicker = Clicker()
     
@@ -81,13 +81,13 @@ class Game:
       IMAGES['yellow_' + skill] = py.transform.scale(py.image.load('assets/images/yellow_' + skill + '.png'), (PIECE_SIZE, PIECE_SIZE))
       
   # display method
-  def DrawGameState(self, surface, view='god'):
+  def DrawGameState(self, surface, view:str='god'):
     self.drawBoard(surface, view)
     self.drawGameInfo(surface, self.Yellow, self.Blue)
     self.drawSquare(surface, view)
     self.drawSkills(surface, self.Yellow, self.Blue)
   
-  def drawBoard(self, surface, view):
+  def drawBoard(self, surface, view:str):
     surface.blit(IMAGES['BG'], (0, 0))
     if view == 'god'or view == 'yellow':
       surface.blit(IMAGES['y_top'], (0, 0))
@@ -98,14 +98,14 @@ class Game:
       surface.blit(IMAGES['b_board'], (0, 71))
       surface.blit(IMAGES['b_bottom'], (0, 817))
       
-  def drawText(self, surface, text):
+  def drawText(self, surface, text:str):
     font = py.font.SysFont("font/SoukouMincho.ttf", 40, False, False)
     # font = py.font.SysFont("arial", 40, False, False)
     textObject = font.render(text, 0, py.Color('white'))
     textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
     surface.blit(textObject, textLocation)
     
-  def drawGameInfo(self, surface, Yellow, Blue):
+  def drawGameInfo(self, surface, Yellow:object, Blue:object):
     font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
     
     text = 'yellow' if Yellow.name is None else Yellow.name
@@ -132,7 +132,7 @@ class Game:
     textLocation = py.Rect(330, 840, WIDTH/5, 70)
     surface.blit(yellowInfo, textLocation)    
     
-  def drawSquare(self, surface, view):
+  def drawSquare(self, surface, view:str):
     # god view or yellow view
     if view == 'god':
       # draw yellow pieces in server
@@ -179,7 +179,7 @@ class Game:
             if piece.checked:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
 
-  def drawSkills(self, surface, Yellow, Blue):
+  def drawSkills(self, surface, Yellow:object, Blue:object):
     # will display constantly
     surface.blit(IMAGES['blue_fw'], (38+9*SQ_SIZE, 103.5+3*SQ_SIZE))
     surface.blit(IMAGES['blue_lb'], (38+9*SQ_SIZE, 103.5+4*SQ_SIZE))
@@ -194,7 +194,7 @@ class Game:
     if not Blue.skills['404']['used']: surface.blit(IMAGES['blue_404'], (38+9*SQ_SIZE, 103.5+1*SQ_SIZE))
     
   # game method
-  def reset(self, yellowInit, blueInit, yellowID, blueID):
+  def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str):
     self.__init__(yellowInit, blueInit, yellowID, blueID)
     
   def checkGameOver(self):

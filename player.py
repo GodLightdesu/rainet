@@ -1,7 +1,7 @@
 
 class Player:
   
-  def __init__(self, color,  name=None) -> None:
+  def __init__(self, color:str,  name:str=None) -> None:
     # self info
     self.color = color
     self.name = name

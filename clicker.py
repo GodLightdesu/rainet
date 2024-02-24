@@ -6,7 +6,7 @@ class Clicker:
     self.mouseX = 0
     self.mouseY = 0
   
-  def update_mouse(self, pos):
+  def update_mouse(self, pos:list):
     self.mouseX, self.mouseY = pos
   
   def getRowCol(self):
