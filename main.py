@@ -128,7 +128,7 @@ class Main:
         # human
         if game.moveMade:
           game.message = f'Moved: {move.getNotation()}'
-          game.switch_player()
+          game.switchPlayer()
           move = None
           game.moveMade = False
       

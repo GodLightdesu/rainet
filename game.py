@@ -81,11 +81,19 @@ class Game:
       IMAGES['yellow_' + skill] = py.transform.scale(py.image.load('assets/images/yellow_' + skill + '.png'), (PIECE_SIZE, PIECE_SIZE))
       
   # display method
+  def drawText(self, surface, text:str):
+    font = py.font.SysFont("font/SoukouMincho.ttf", 40, False, False)
+    # font = py.font.SysFont("arial", 40, False, False)
+    textObject = font.render(text, 0, py.Color('white'))
+    textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
+    surface.blit(textObject, textLocation)
+  
   def DrawGameState(self, surface, view:str='god'):
     self.drawBoard(surface, view)
     self.drawGameInfo(surface, self.Yellow, self.Blue)
     self.drawSquare(surface, view)
     self.drawSkills(surface, self.Yellow, self.Blue)
+    self.showMoves(surface)
   
   def drawBoard(self, surface, view:str):
     surface.blit(IMAGES['BG'], (0, 0))
@@ -97,14 +105,7 @@ class Game:
       surface.blit(IMAGES['b_top'], (0, 0))
       surface.blit(IMAGES['b_board'], (0, 71))
       surface.blit(IMAGES['b_bottom'], (0, 817))
-      
-  def drawText(self, surface, text:str):
-    font = py.font.SysFont("font/SoukouMincho.ttf", 40, False, False)
-    # font = py.font.SysFont("arial", 40, False, False)
-    textObject = font.render(text, 0, py.Color('white'))
-    textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
-    surface.blit(textObject, textLocation)
-    
+  
   def drawGameInfo(self, surface, Yellow:object, Blue:object):
     font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
     
@@ -192,7 +193,24 @@ class Game:
     
     if not Blue.skills['vc']['used']: surface.blit(IMAGES['blue_vc'], (38+9*SQ_SIZE, 103.5+2*SQ_SIZE))
     if not Blue.skills['404']['used']: surface.blit(IMAGES['blue_404'], (38+9*SQ_SIZE, 103.5+1*SQ_SIZE))
-    
+  
+  def showMoves(self, surface):
+    '''
+    show valid moves of a piece when it's clicked
+    '''
+    if self.clicker.selected_piece:
+      piece = self.clicker.piece
+      r = self.clicker.initial_row
+      c = self.clicker.initial_col
+      
+      s = py.Surface((PIECE_SIZE, PIECE_SIZE))
+      s.set_alpha(100)  # transperancy value -> 0 transparent; 255 opaque
+      s.fill(py.Color('white'))
+      # loop all valid moves
+      for move in piece.moves:
+        if move.startRow == r and move.startCol == c:
+          surface.blit(s, (32.5+move.endCol*SQ_SIZE, 98+move.endRow*SQ_SIZE)) 
+  
   # game method
   def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str):
     self.__init__(yellowInit, blueInit, yellowID, blueID)
@@ -211,7 +229,7 @@ class Game:
       else: return self.Blue.color
     else: return None
     
-  def switch_player(self):
+  def switchPlayer(self):
     self.turn += 1
     self.player = self.players[(self.turn + 1) % 2]
     self.enemy = self.players[self.turn % 2]
