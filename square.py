@@ -33,20 +33,19 @@ class Square:
   
   # exit
   def is_ally_exit(self, color:str) -> bool:
-    if self.exit is None:
-      return False
-    elif self.exit.color == color:
-      return True
-    else:
-      return False
+    return self.exit is not None and self.exit.color == color
   
   def is_enemy_exit(self, color:str) -> bool:
-    if self.exit is None:
-      return False
-    elif self.exit.color != color:
-      return True
-    else:
-      return False
+    return self.exit is not None and self.exit.color != color
+    
+  def can_pass(self, color) -> bool:
+    return (not self.has_ally_piece(color) and 
+            not self.has_enemy_fw(color) and 
+            not self.is_enemy_exit(color) and 
+            not self.boundary) 
+    
+  def isBlocked(self, color) -> bool:
+    return self.has_enemy_fw(color) or self.has_piece() or self.boundary == True
     
 class Exit:
   def __init__(self, color:str) -> None:

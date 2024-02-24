@@ -223,3 +223,22 @@ class Game:
     self.useSkill = False
     self.skillUsed = False
     self.undoSkill = False
+    
+  # other method
+  def getValidMoves(self) -> list:
+    '''
+    get valid moves for all ally pieces
+    '''
+    moves = []
+    for r in range(len(self.board.squares)):
+      for c in range(len(self.board.squares[r])):
+        if self.board.squares[r][c].piece is not None:
+          turn = self.board.squares[r][c].piece.color
+          # print(turn, self.next_player)
+          if turn == self.player.color:
+            self.board.calc_moves(self.board.squares[r][c].piece, r, c)
+            for move in self.board.squares[r][c].piece.moves:
+              moves.append(move)
+              print(move.moveID)
+    print('No of valid moves:', len(moves))
+    return moves

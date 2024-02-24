@@ -84,7 +84,9 @@ class Main:
                   game.useSkill == False and game.skillUsed == False and
                   board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
               print('move')
-            
+              validMoves = game.getValidMoves()
+              
+              
             # no ally piece
             else: print('not ally piece')
             
