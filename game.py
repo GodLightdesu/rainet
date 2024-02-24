@@ -3,6 +3,7 @@ import os
 
 from player import Player
 from board import Board
+from clicker import Clicker
 
 from const import *
 from square import *
@@ -12,6 +13,7 @@ class Game:
   
   def __init__(self, yellowInit, blueInit, yellowID=None, blueID=None) -> None:
     self.board = Board()
+    self.clicker = Clicker()
     
     # game init
     self.message = ''

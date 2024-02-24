@@ -39,6 +39,7 @@ class Main:
   def Gback(self):
     screen = self.screen
     game = self.game
+    clicker = self.game.clicker
     
     while True:
       # handle human input data
@@ -49,10 +50,12 @@ class Main:
           py.quit()
           sys.exit()
 
-         # mouse handler
+        # mouse handler
         elif event.type == py.MOUSEBUTTONDOWN:
           if not game.gameOver:
-            pass
+            clicker.update_mouse(event.pos)
+            clicked_row, clicked_col = clicker.getRowCol()
+            print(clicked_row, clicked_col)
         
         # key handler
         elif event.type == py.KEYDOWN:
@@ -63,8 +66,6 @@ class Main:
           # reset the game when 'r' pressed
           if event.key == py.K_r:
             pass
-      
-      
       
       # game logic
       if not game.gameOver:
