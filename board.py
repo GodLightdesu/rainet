@@ -34,9 +34,8 @@ class Board:
       - boundary     -> False
       - enemy server -> False
       '''
-      if 0 <= endRow < 10 and 0 <= endCol <8:
-        endSq = self.squares[endRow][endCol]
-        if endSq.can_pass(piece.color): valid = True
+      if 0 <= endRow < 10 and 0 <= endCol < 8:
+        if self.squares[endRow][endCol].can_pass(piece.color): valid = True
         else: valid = False
       else: valid = False
       return valid
