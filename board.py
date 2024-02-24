@@ -18,7 +18,7 @@ class Board:
   
   def enterServer(self, player, piece):
     if piece.lb:
-      player.skillUsed['lb'] = False
+      player.skills['lb']['used'] = False
 
     # non lb piece
     if piece.name == 'link':  player.link_enter += 1
@@ -32,7 +32,7 @@ class Board:
   def capturePiece(self, player, enemy, enemyPiece):
     # lb piece
     if enemyPiece.lb:
-      enemy.skillUsed['lb'] = False
+      enemy.skills['lb']['used'] = False
 
     # non lb piece
     if enemyPiece.name == 'link':  player.link_eat += 1
@@ -129,7 +129,35 @@ class Board:
           self.add_moveToPiece(piece, startRow, startCol, endRow, endCol)
     
     def LB_move():
-      pass    
+      possible_moves = [(startRow-2, startCol), (startRow+2, startCol), (startRow, startCol-2), (startRow, startCol+2), 
+                        (startRow-1, startCol+1), (startRow+1, startCol+1), (startRow+1, startCol-1),  (startRow-1, startCol-1)]
+    
+      check = {
+        (startRow -2, startCol) : [(startRow -1, startCol)],
+        (startRow +2, startCol) : [(startRow +1, startCol)], 
+        (startRow, startCol -2) : [(startRow, startCol -1)], 
+        (startRow, startCol +2) : [(startRow, startCol +1)], 
+        (startRow -1, startCol +1) : [(startRow -1, startCol), (startRow, startCol +1)], 
+        (startRow +1, startCol +1) : [(startRow +1, startCol), (startRow, startCol +1)], 
+        (startRow +1, startCol -1) : [(startRow +1, startCol), (startRow, startCol -1)], 
+        (startRow -1, startCol -1) : [(startRow -1, startCol), (startRow, startCol -1)]
+      }
+      
+      for possible_move in possible_moves:
+        # vertival or horizontal move
+        if len(check[possible_move]) == 1:
+          eRow, eCol = check[possible_move][0]
+          eSq = self.squares[eRow][eCol]
+          if isValidMove(eRow, eCol):
+            self.add_moveToPiece(piece, startRow, startCol, eRow, eCol)
+            
+            endRow, endCol = possible_move
+            if isValidMove(endRow, endCol) and not eSq.isBlocked(piece.color):
+              self.add_moveToPiece(piece, startRow, startCol, endRow, endCol)
+        
+        # diagonal move
+        elif len(check[possible_move]) == 2:
+          pass
     
     # lb piece
     if piece.lb: LB_move()
