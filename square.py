@@ -45,7 +45,7 @@ class Square:
             not self.boundary) 
     
   def isBlocked(self, color) -> bool:
-    return self.has_enemy_fw(color) or self.has_piece() or self.boundary == True
+    return self.has_enemy_fw(color) or self.has_piece() or self.boundary == True or self.is_enemy_exit(color)
     
 class Exit:
   def __init__(self, color:str) -> None:

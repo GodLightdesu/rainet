@@ -157,7 +157,23 @@ class Board:
         
         # diagonal move
         elif len(check[possible_move]) == 2:
-          pass
+          blocked = 0 # max 2 cause only check 2 dir
+          # count no of blocked
+          for check_move in check[possible_move]:    
+            eRow, eCol = check_move
+            eSq = self.squares[eRow][eCol]
+
+            if eSq.isBlocked(piece.color):
+              blocked += 1
+          
+          print(possible_move, blocked)
+          
+          # has path to move  
+          if blocked <= 1:
+            endRow, endCol = possible_move
+            # print(self.squares[endRow][endCol])
+            if isValidMove(endRow, endCol):
+              self.add_moveToPiece(piece, startRow, startCol, endRow, endCol)
     
     # lb piece
     if piece.lb: LB_move()
