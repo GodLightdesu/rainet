@@ -23,21 +23,31 @@ class Skill:
     
     def undoLB():
       game.message = game.player.name + ' undo LB'
-      print(game.player.name + ' undo LB')
+      # print(game.player.name + ' undo LB')
       if game.player.skills['lb']['used']:
         row, col = game.player.skills['lb']['log'].pop()
         game.board.squares[row][col].piece.lb = False
         game.player.skills['lb']['used'] = False
+      
       else:
         lastLBpos = game.player.skills['lb']['log'].pop()
-        print(game.player.name, lastLBpos)
+        # print(game.player.name, lastLBpos)
         row, col = lastLBpos
         game.board.squares[row][col].piece.lb = True
         game.player.skills['lb']['used'] = True
       
     def undoFW():
-      pass
-    
+      game.message = game.player.name + ' undo FW'
+      if game.player.skills['fw']['used']:
+        row, col = game.player.skills['fw']['log'].pop()
+        game.board.squares[row][col].fw = None
+        game.player.skills['fw']['used'] = False
+      
+      else:
+        row, col = game.player.skills['fw']['log'].pop()
+        game.board.squares[row][col].fw = FireWall(game.player.color)
+        game.player.skills['fw']['used'] = True
+      
     def undoVC():
       pass
     
