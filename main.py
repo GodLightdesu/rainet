@@ -166,6 +166,10 @@ class Main:
           # reset the game when 'r' pressed
           if event.key == py.K_r:
             pass
+          
+          # primt console board when 'b' pressed
+          if event.key == py.K_b:
+            board.printBoard()
       
       # game logic
       if not game.gameOver:

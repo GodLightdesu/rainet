@@ -210,7 +210,26 @@ class Board:
   # other method
   def onBoard(self, row, col) -> bool:
     return 0 <= row <= 9 and 0 <= col <= 7
-    
+  
+  def printBoard(self):
+    for row in range(ROWS):
+      for col in range(COLS):
+        if self.squares[row][col].boundary:
+          print('#', end=' ')
+          continue
+        if self.squares[row][col].piece is not None:
+          print(self.squares[row][col].piece.name[0], end=' ')
+        else: print('-', end=' ')
+      print()
+  
+  def getLBpiecePos(self, color):
+    for row in range(ROWS):
+      for col in range(COLS):
+        if (self.squares[row][col].piece is not None and 
+            self.squares[row][col].piece.lb and 
+            self.squares[row][col].piece.color == color):
+          return row, col
+  
   # private method (_methodName)
   def _create(self):
     # board

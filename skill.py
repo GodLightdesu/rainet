@@ -28,8 +28,8 @@ class Skill:
     row, col = self.target0
     targetSq = self.board.squares[row][col]
     
-    if self.player.skills['lb']['used'] and self.target0 == self.player.skills['lb']['log'][-1]:
-      
+    if self.player.skills['lb']['used'] :
+      row, col = self.board.getLBpiecePos(self.player.color)
       self.board.squares[row][col].piece.lb = False
       self.player.skills['lb']['used'] = False
       self.player.skills['lb']['log'].append((row, col))
