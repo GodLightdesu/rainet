@@ -152,13 +152,15 @@ class Main:
           # undo when 'z' is pressed
           if event.key == py.K_z: 
             if len(game.gamelog) != 0:
+              last_key = list(game.gamelog)[-1]
+              last_value = game.gamelog[last_key]
               
               # uninstall terminal card
-              if list(game.gamelog)[-1] in SKILLS:
-                pass
+              if last_value in SKILLS:
+                skill.undoSkill(game)
               
               # undo move
-              elif list(game.gamelog)[-1] not in SKILLS:
+              elif last_value not in SKILLS:
                 board.undoMove(game)
                 game.message = 'Undo move'
                 game.gameOver = False
@@ -175,11 +177,26 @@ class Main:
           
           # primt console board when 'b' pressed
           if event.key == py.K_b:
+            print('---------------')
             board.printBoard()
+            print('---------------')
           
-          if event.key == py.K_p:
-            print('Turn', game.turn, 'player:', game.player.name, 'enemy:', game.enemy.name)
-      
+          # print detail game info when 'i' pressed
+          if event.key == py.K_i:
+            print('-------------------------------------')
+            print('Turn', game.turn, '| player:', game.player.name, '| enemy:', game.enemy.name)
+            print('Game log:')
+            if len(game.gamelog) != 0:
+              for key in game.gamelog:
+                if game.gamelog[key] not in SKILLS:
+                  print(f'{key}.{game.gamelog[key].moveID}', end = '\n' if key % 5 == 0 else " ")
+                else: print(f'{key}.{game.gamelog[key]}', end = '\n' if key % 5 == 0 else " ")
+            print()
+              
+            # print('Move log:', game.movelog)
+            # print('Skill log:', game.skillLog)
+            print('-------------------------------------')
+            
       # game logic
       if not game.gameOver:
         

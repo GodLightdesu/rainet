@@ -23,6 +23,46 @@ class Skill:
       'vc' : self.useVC,
       '404' :  self.use404
     }
+    
+    self.skillUndo = {
+      'lb' : self.undoLB,
+      'fw' : self.undoFW,
+      'vc' : self.undoVC,
+      '404' :  self.use404
+    }
+    
+    self.board = None
+    self.player = None
+    self.target0 = None
+    self.target1 = None
+    
+  def undoSkill(self, game: object):
+    if len(game.skillLog) != 0:
+      game.gamelog.pop(list(game.gamelog)[-1])
+      skill = game.skillLog.pop(list(game.skillLog)[-1])
+      game.revert()
+      
+      self.skillUndo[skill](game)
+  
+  def undoLB(self, game):
+    game.message = 'undo LB'
+    if game.player.skills['lb']['used']:
+      row, col = self.player.skills['lb']['log'].pop()
+      game.board.squares[row][col].piece.lb = False
+      game.player.skills['lb']['used'] = False
+    else:
+      row, col = self.player.skills['lb']['log'].pop()
+      game.board.squares[row][col].piece.lb = True
+      game.player.skills['lb']['used'] = True
+    
+  def undoFW(self, game):
+    pass
+  
+  def undoVC(self, game):
+    pass
+  
+  def use404(self, game):
+    pass
   
   def useLB(self) -> bool:
     row, col = self.target0
@@ -47,7 +87,6 @@ class Skill:
     
   def useFW(self) -> bool:
     row, col = self.target0
-    # targetSq = self.board.squares[row][col]
     
     # used fw, uninstall fw
     if self.player.skills['fw']['used'] and self.target0 == self.player.skills['fw']['log'][-1]:
