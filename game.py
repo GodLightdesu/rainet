@@ -19,7 +19,9 @@ class Game:
     self.message = ''
     self.gameOver = False
     self.turn = 1
-    self.gamelog = []
+    self.movelog = {}
+    self.skillLog = {}
+    self.gamelog = {}
     
     self.next_player = 'yellow'
     self.humanMove = True
@@ -31,6 +33,7 @@ class Game:
     self.enemy = self.players[self.turn % 2]
     
     # move init
+    self.move = None
     self.moveMade = False
     
     # skill init
@@ -235,12 +238,31 @@ class Game:
     self.enemy = self.players[self.turn % 2]
     # print(self.player.color)
     
+    self.move = None
     self.moveMade = False
 
     self.whichSkill = None
     self.useSkill = False
     self.skillUsed = False
     self.undoSkill = False
+    
+    print(self.gamelog)
+  
+  def revert(self):
+    self.turn -= 1
+    self.player = self.players[(self.turn + 1) % 2]
+    self.enemy = self.players[self.turn % 2]
+    # print(self.player.color)
+    
+    self.move = None
+    self.moveMade = False
+
+    self.whichSkill = None
+    self.useSkill = False
+    self.skillUsed = False
+    self.undoSkill = False
+    
+    print(self.gamelog)
     
   # other method
   def getValidMoves(self) -> list:

@@ -61,7 +61,7 @@ class Main:
           if not game.gameOver:
             clicker.updateMouse(event.pos)
             clicked_row, clicked_col = clicker.getRowCol()
-            print(clicked_row, clicked_col)
+            # print(clicked_row, clicked_col)
             
             # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
@@ -123,10 +123,10 @@ class Main:
               startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
               endsq = game.board.squares[clicked_row][clicked_col]
               
-              move = Move(startsq, endsq)
-              if board.validMove(clicker.piece, move):
+              game.move = Move(startsq, endsq)
+              if board.validMove(clicker.piece, game.move):
                 
-                board.move(game.player, game.enemy, clicker.piece, move)
+                board.move(game.player, game.enemy, clicker.piece, game.move)
                 game.moveMade = True
               
               # else: print('Invalid move')
@@ -153,7 +153,15 @@ class Main:
         elif event.type == py.KEYDOWN:
           # undo when 'z' is pressed
           if event.key == py.K_z: 
-            pass
+            if len(game.gamelog) != 0:
+              # undo move
+              if list(game.gamelog)[-1] not in SKILLS:
+                board.undoMove(game)
+                game.message = 'Undo move'
+                
+                moveMade = True
+                gameOver = False
+              
           
           # reset the game when 'r' pressed
           if event.key == py.K_r:
@@ -164,12 +172,16 @@ class Main:
         
         # human
         if game.moveMade:
-          game.message = f'Moved: {move.getNotation()}'
+          game.message = f'Moved: {game.move.getNotation()}'
+          game.movelog[game.turn] = game.move
+          game.gamelog[game.turn] = game.move
           game.switchPlayer()
         
         # used skill
         elif game.skillUsed:
           game.message = f'Used: {game.whichSkill}'
+          game.skillLog[game.turn] = game.whichSkill
+          game.gamelog[game.turn] = game.whichSkill
           game.switchPlayer()
           
       

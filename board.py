@@ -1,3 +1,4 @@
+from re import T
 from move import Move
 
 from const import *
@@ -13,10 +14,10 @@ class Board:
     self._add_Piece('yellow')
     self._add_Piece('blue')
   
-  def isEnterServer(self, player, endSq):
+  def isEnterServer(self, player: object, endSq: object):
     return endSq.is_ally_exit(player.color)
   
-  def enterServer(self, player, piece):
+  def enterServer(self, player: object, piece: object):
     if piece.lb:
       player.skills['lb']['used'] = False
 
@@ -26,10 +27,17 @@ class Board:
     
     player.serverStack.append(piece)
     
-  def leaveServer(self):
-    pass
+  def leaveServer(self, player: object):
+    piece = player.serverStack.pop()
+    
+    if piece.lb:
+      player.skills['lb']['used'] = True
+
+    # non lb piece
+    if piece.name == 'link':  player.link_enter -= 1
+    elif piece.name == 'virus': player.virus_enter -= 1
   
-  def capturePiece(self, player, enemy, enemyPiece):
+  def capturePiece(self, player: object, enemy: object, enemyPiece: object):
     # lb piece
     if enemyPiece.lb:
       enemy.skills['lb']['used'] = False
@@ -38,10 +46,16 @@ class Board:
     if enemyPiece.name == 'link':  player.link_eat += 1
     elif enemyPiece.name == 'virus': player.virus_eat += 1
   
-  def unCapturePiece(self):
-    pass
+  def unCapturePiece(self, player: object, enemy: object, enemyPiece: object):
+    # lb piece
+    if enemyPiece.lb:
+      enemy.skills['lb']['used'] = True
+
+    # non lb piece
+    if enemyPiece.name == 'link':  player.link_eat -= 1
+    elif enemyPiece.name == 'virus': player.virus_eat -= 1
     
-  def add_moveToPiece(self, piece, startRow, startCol, endRow, endCol):
+  def add_moveToPiece(self, piece: object, startRow: int, startCol: int, endRow: int, endCol: int):
     # create asquares for the new move
     startSq = self.squares[startRow][startCol]
     endSq = self.squares[endRow][endCol]
@@ -51,7 +65,7 @@ class Board:
     piece.add_move(move)
   
   # move method
-  def move(self, player, enemy, piece, move):
+  def move(self, player: object, enemy: object, piece: object, move: object):
     startsq = move.startsq
     endsq = move.endsq
     
@@ -81,14 +95,27 @@ class Board:
     piece.clear_moves()
     
     # set last move
-    player.moveLog.append(move)
-    self.moveLog.append(move)
+    # player.moveLog.append(move)
+    # self.moveLog.append(move)
 
-  def undoMove(self):
-    
-    pass  
+  def undoMove(self, game: object):
+    if len(game.movelog) != 0:
+      game.gamelog.pop(list(game.gamelog)[-1])
+      move = game.movelog.pop(list(game.movelog)[-1])
+      game.revert()
+      
+      self.squares[move.startRow][move.startCol].piece = move.pieceMoved
+      self.squares[move.endRow][move.endCol].piece = move.pieceCaptured 
+      
+      endSq = self.squares[move.endRow][move.endCol]
+      
+      # update info
+      if self.isEnterServer(game.player, endSq):
+        self.leaveServer(game.player)
+      elif endSq.has_enemy_piece(game.player.color):
+        self.unCapturePiece(game.player, game.enemy, endSq.piece)
   
-  def validMove(self, piece, move):
+  def validMove(self, piece: object, move: object):
     return move in piece.moves
   
   def calc_moves(self, piece: object, startRow: int, startCol: int):
@@ -166,7 +193,7 @@ class Board:
             if eSq.isBlocked(piece.color):
               blocked += 1
           
-          print(possible_move, blocked)
+          # print(possible_move, blocked)
           
           # has path to move  
           if blocked <= 1:
