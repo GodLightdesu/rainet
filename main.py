@@ -154,13 +154,16 @@ class Main:
           # undo when 'z' is pressed
           if event.key == py.K_z: 
             if len(game.gamelog) != 0:
+              
+              # undo when 'z' is pressed
+              if list(game.gamelog)[-1] in SKILLS:
+                pass
+              
               # undo move
-              if list(game.gamelog)[-1] not in SKILLS:
+              elif list(game.gamelog)[-1] not in SKILLS:
                 board.undoMove(game)
                 game.message = 'Undo move'
-                
-                moveMade = True
-                gameOver = False
+                game.gameOver = False
               
           
           # reset the game when 'r' pressed
@@ -170,6 +173,9 @@ class Main:
           # primt console board when 'b' pressed
           if event.key == py.K_b:
             board.printBoard()
+          
+          if event.key == py.K_p:
+            print('Turn', game.turn, 'player:', game.player.name, 'enemy:', game.enemy.name)
       
       # game logic
       if not game.gameOver:
@@ -179,20 +185,21 @@ class Main:
           game.message = f'Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
           game.gamelog[game.turn] = game.move
-          game.switchPlayer()
+          game.nextPlayer()
         
         # used skill
         elif game.skillUsed:
           game.message = f'Used: {game.whichSkill}'
           game.skillLog[game.turn] = game.whichSkill
           game.gamelog[game.turn] = game.whichSkill
-          game.switchPlayer()
+          game.nextPlayer()
           
       
       # render game
       # game.message = 'test'
       game.DrawGameState(screen)
       game.drawText(screen, game.message)
+      # game.drawText(screen, game.player.name + ' ' + str(game.turn))
       
       # check winner
       winner = game.checkGameOver()

@@ -231,38 +231,37 @@ class Game:
       if self.Blue.name is not None:  return self.Blue.name
       else: return self.Blue.color
     else: return None
-    
+  
   def switchPlayer(self):
-    self.turn += 1
     self.player = self.players[(self.turn + 1) % 2]
     self.enemy = self.players[self.turn % 2]
-    # print(self.player.color)
-    
-    self.move = None
+  
+  def updateInfo(self):
+    # self.move = None
     self.moveMade = False
 
     self.whichSkill = None
     self.useSkill = False
     self.skillUsed = False
     self.undoSkill = False
+   
+  def nextPlayer(self):
+    self.turn += 1
+    self.switchPlayer()
+    print('switch to', self.player.name)
     
-    print(self.gamelog)
+    self.updateInfo()
+    
+    # print(self.gamelog)
   
   def revert(self):
     self.turn -= 1
-    self.player = self.players[(self.turn + 1) % 2]
-    self.enemy = self.players[self.turn % 2]
-    # print(self.player.color)
+    self.switchPlayer()
+    print('revert to', self.player.name)
     
-    self.move = None
-    self.moveMade = False
-
-    self.whichSkill = None
-    self.useSkill = False
-    self.skillUsed = False
-    self.undoSkill = False
+    self.updateInfo()
     
-    print(self.gamelog)
+    # print(self.gamelog)
     
   # other method
   def getValidMoves(self) -> list:
