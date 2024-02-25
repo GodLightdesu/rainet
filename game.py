@@ -120,12 +120,12 @@ class Game:
       
       text = 'yellow' if Yellow.name is None else Yellow.name
       yellowInfo = font.render(text, 1, py.Color('black'))
-      textLocation = py.Rect(5, 837, WIDTH/5, 70)
+      textLocation = py.Rect(20, 837, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
       text = 'blue' if Blue.name is None else Blue.name
       blueInfo = font.render(text, 1, py.Color('black'))
-      textLocation = py.Rect(530, 837, WIDTH/5, 70)
+      textLocation = py.Rect(450, 837, WIDTH/5, 70)
       surface.blit(blueInfo, textLocation)
       
       # score
@@ -157,12 +157,12 @@ class Game:
       
       text = 'blue' if Blue.name is None else Blue.name
       blueInfo = font.render(text, 1, py.Color('black'))
-      textLocation = py.Rect(1, 837, WIDTH/5, 70)
+      textLocation = py.Rect(10, 837, WIDTH/5, 70)
       surface.blit(blueInfo, textLocation)
       
       text = 'yellow' if Yellow.name is None else Yellow.name
       yellowInfo = font.render(text, 1, py.Color('black'))
-      textLocation = py.Rect(530, 837, WIDTH/5, 70)
+      textLocation = py.Rect(450, 837, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
       # score
@@ -188,12 +188,11 @@ class Game:
       textLocation = py.Rect(340, 855, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
-      
     
   def drawSquare(self, surface):
     # god view
     if self.view == 'god':
-      # draw yellow pieces in server
+      # draw yellow pieces in blue server
       if len(self.Blue.serverStack) != 0:
         for y in range(len(self.Blue.serverStack)):
           piece = self.Blue.serverStack[y]
@@ -203,7 +202,7 @@ class Game:
           piece.texture_rect = img.get_rect(center=img_center)
           surface.blit(img, piece.texture_rect)
       
-      # draw blue pieces in server
+      # draw blue pieces in yellow server
       if len(self.Yellow.serverStack) != 0:
         for b in range(len(self.Yellow.serverStack)):
           piece = self.Yellow.serverStack[b]
@@ -238,10 +237,79 @@ class Game:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
 
     elif self.view == 'yellow':
-      pass
+      # draw yellow pieces in blue server
+      if len(self.Blue.serverStack) != 0:
+        for y in range(len(self.Blue.serverStack)):
+          piece = self.Blue.serverStack[y]
+
+          img = py.image.load(piece.texture)
+          img_center = 28 + y * SQ_SIZE + SQ_SIZE//2, 95+YSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
+      
+      # draw blue pieces in yellow server
+      if len(self.Yellow.serverStack) != 0:
+        for b in range(len(self.Yellow.serverStack)):
+          piece = self.Yellow.serverStack[b]
+          if piece.checked:
+            img = py.image.load(piece.texture)
+          else: img = py.image.load(Unknown('blue').texture)
+          img_center = 28 + b * SQ_SIZE + SQ_SIZE//2, 95+BSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
+
+      # draw board
+      for row in range(ROWS):
+        for col in range(COLS):
+          # draw fire wall
+          if self.board.squares[row][col].has_fw():
+            fw = self.board.squares[row][col].fw
+            img = py.image.load(fw.texture)
+            surface.blit(img, (32.5+col*SQ_SIZE, 100+row*SQ_SIZE))
+            surface.blit(IMAGES['shield'], (23+col*SQ_SIZE, 86+row*SQ_SIZE))
+          
+          # draw piece
+          if self.board.squares[row][col].has_piece():
+            piece = self.board.squares[row][col].piece
+            if piece.checked or piece.color == self.view:
+              img = py.image.load(piece.texture)
+            else: img = py.image.load(Unknown('blue').texture)
+            img_center = 28+col*SQ_SIZE + SQ_SIZE//2, 95+row*SQ_SIZE + SQ_SIZE//2
+            piece.texture_rect = img.get_rect(center=img_center)
+            surface.blit(img, piece.texture_rect)
+            
+            if piece.lb:
+              surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
+            if piece.checked:
+              surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
     
     elif self.view == 'blue':
-      pass
+      
+      # draw board
+      for row in range(ROWS):
+        for col in range(COLS):
+          # draw fire wall
+          if self.board.blueBoard[row][col].has_fw():
+            fw = self.board.blueBoard[row][col].fw
+            img = py.image.load(fw.texture)
+            surface.blit(img, (32.5+col*SQ_SIZE, 100+row*SQ_SIZE))
+            surface.blit(IMAGES['shield'], (23+col*SQ_SIZE, 86+row*SQ_SIZE))
+          
+          # draw piece
+          if self.board.blueBoard[row][col].has_piece():
+            piece = self.board.blueBoard[row][col].piece
+            
+            if piece.checked or piece.color == self.view:
+              img = py.image.load(piece.texture)
+            else: img = py.image.load(Unknown('yellow').texture)
+            img_center = 28+col*SQ_SIZE + SQ_SIZE//2, 95+row*SQ_SIZE + SQ_SIZE//2
+            piece.texture_rect = img.get_rect(center=img_center)
+            surface.blit(img, piece.texture_rect)
+            
+            if piece.lb:
+              surface.blit(IMAGES['LB'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
+            if piece.checked:
+              surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
     
   def drawSkills(self, surface, Yellow:object, Blue:object):
     if self.view == 'god' or self.view == 'yellow':
