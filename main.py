@@ -25,8 +25,6 @@ class Main:
     self.yellowID = yellowID
     self.blueID = blueID
     
-    self.skill = Skill()
-    
     # only do this once, before the while loop
     self.game.loadImages()
 
@@ -45,7 +43,7 @@ class Main:
     game = self.game
     board = self.game.board
     clicker = self.game.clicker
-    skill = self.skill
+    skill = Skill()
     
     while True:
       # handle human input data
@@ -155,7 +153,7 @@ class Main:
           if event.key == py.K_z: 
             if len(game.gamelog) != 0:
               
-              # undo when 'z' is pressed
+              # uninstall terminal card
               if list(game.gamelog)[-1] in SKILLS:
                 pass
               
@@ -168,7 +166,12 @@ class Main:
           
           # reset the game when 'r' pressed
           if event.key == py.K_r:
-            pass
+            game.reset(self.yellowInit, self.blueInit, self.yellowID, self.blueID)
+            screen = self.screen
+            game = self.game
+            board = self.game.board
+            clicker = self.game.clicker
+            skill = Skill()
           
           # primt console board when 'b' pressed
           if event.key == py.K_b:
