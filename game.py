@@ -11,7 +11,7 @@ from piece import *
 
 class Game:
   
-  def __init__(self, yellowInit:str, blueInit:str, yellowID:str=None, blueID:str=None) -> None:
+  def __init__(self, yellowInit:str, blueInit:str, yellowID:str='yellow', blueID:str='blue') -> None:
     self.board = Board()
     self.clicker = Clicker()
     
@@ -248,7 +248,7 @@ class Game:
   def nextPlayer(self):
     self.turn += 1
     self.switchPlayer()
-    print('switch to', self.player.name)
+    # print('switch to', self.player.name)
     
     self.updateInfo()
     
@@ -257,7 +257,7 @@ class Game:
   def revert(self):
     self.turn -= 1
     self.switchPlayer()
-    print('revert to', self.player.name)
+    # print('revert to', self.player.name)
     
     self.updateInfo()
     

@@ -93,7 +93,7 @@ class Main:
                 if len(clicker.playerClicks) == 2:
                   target0 = clicker.playerClicks[0]
                   target1 = clicker.playerClicks[1]
-                  game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0, target1)
+                  game.skillUsed = skill.use(game, game.whichSkill, target0, target1)
                   clicker.claerPlayerClicks()
                 
                   # not valid target
@@ -105,7 +105,7 @@ class Main:
               # only need one click
               else:
                 target0 = (clicked_row, clicked_col)
-                game.skillUsed = skill.use(game.board, game.player, game.whichSkill, target0)
+                game.skillUsed = skill.use(game, game.whichSkill, target0)
                 clicker.claerPlayerClicks()
                 
                 # not valid target
@@ -162,7 +162,7 @@ class Main:
               # undo move
               elif last_value not in SKILLS:
                 board.undoMove(game)
-                game.message = 'Undo move'
+                game.message = game.player.name + ' Undo move'
                 game.gameOver = False
               
           
@@ -193,8 +193,8 @@ class Main:
                 else: print(f'{key}.{game.gamelog[key]}', end = '\n' if key % 5 == 0 else " ")
             print()
               
-            # print('Move log:', game.movelog)
-            # print('Skill log:', game.skillLog)
+            print(game.player.name, ':', game.player.skills['lb']['log'])
+            print(game.enemy.name, ':', game.enemy.skills['lb']['log'])
             print('-------------------------------------')
             
       # game logic
@@ -202,14 +202,14 @@ class Main:
         
         # human
         if game.moveMade:
-          game.message = f'Moved: {game.move.getNotation()}'
+          game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
           game.gamelog[game.turn] = game.move
           game.nextPlayer()
         
         # used skill
         elif game.skillUsed:
-          game.message = f'Used: {game.whichSkill}'
+          game.message = f'{game.player.name} Used: {game.whichSkill}'
           game.skillLog[game.turn] = game.whichSkill
           game.gamelog[game.turn] = game.whichSkill
           game.nextPlayer()
