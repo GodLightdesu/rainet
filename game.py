@@ -115,58 +115,80 @@ class Game:
   
   def drawGameInfo(self, surface, Yellow:object, Blue:object):
     if self.view == 'god' or self.view == 'yellow':
+      # name
       font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
       
       text = 'yellow' if Yellow.name is None else Yellow.name
-      yellowInfo = font.render(text, 0, py.Color('black'))
+      yellowInfo = font.render(text, 1, py.Color('black'))
       textLocation = py.Rect(5, 837, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
       text = 'blue' if Blue.name is None else Blue.name
-      blueInfo = font.render(text, 0, py.Color('black'))
+      blueInfo = font.render(text, 1, py.Color('black'))
       textLocation = py.Rect(530, 837, WIDTH/5, 70)
       surface.blit(blueInfo, textLocation)
       
+      # score
       font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 40, True, False)
     
-      text = 'link: ' + str(Yellow.link_eat) + ' virus: ' + str(Yellow.virus_eat)
-      
-      yellowInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(110, 840, WIDTH/5, 70)
+      text = 'link: ' + str(Yellow.link_eat)
+      yellowInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(190, 825, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
-      text = 'link: ' + str(Blue.link_eat) + ' virus: ' + str(Blue.virus_eat)
+      text = 'virus: ' + str(Yellow.virus_eat)
+      yellowInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(190, 855, WIDTH/5, 70)
+      surface.blit(yellowInfo, textLocation)
       
-      yellowInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(330, 840, WIDTH/5, 70)
-      surface.blit(yellowInfo, textLocation)    
+      text = 'link: ' + str(Blue.link_eat)      
+      blueInfo = font.render(text, 0, py.Color('black'))
+      textLocation = py.Rect(340, 825, WIDTH/5, 70)
+      surface.blit(blueInfo, textLocation)    
+      
+      text = 'virus: ' + str(Blue.virus_eat)
+      blueInfo = font.render(text, 0, py.Color('black'))
+      textLocation = py.Rect(340, 855, WIDTH/5, 70)
+      surface.blit(blueInfo, textLocation)   
     
     elif self.view == 'blue':
+      # name
       font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
       
-      text = 'yellow' if Yellow.name is None else Yellow.name
-      yellowInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(515, 837, WIDTH/5, 70)
-      surface.blit(yellowInfo, textLocation)
-      
       text = 'blue' if Blue.name is None else Blue.name
-      blueInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(5, 837, WIDTH/5, 70)
+      blueInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(1, 837, WIDTH/5, 70)
       surface.blit(blueInfo, textLocation)
       
-      font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 40, True, False)
-    
-      text = 'link: ' + str(Yellow.link_eat) + ' virus: ' + str(Yellow.virus_eat)
-      
-      yellowInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(315, 840, WIDTH/5, 70)
+      text = 'yellow' if Yellow.name is None else Yellow.name
+      yellowInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(530, 837, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
-      text = 'link: ' + str(Blue.link_eat) + ' virus: ' + str(Blue.virus_eat)
+      # score
+      font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 40, True, False)
       
-      yellowInfo = font.render(text, 0, py.Color('black'))
-      textLocation = py.Rect(100, 840, WIDTH/5, 70)
-      surface.blit(yellowInfo, textLocation)    
+      text = 'link: ' + str(Blue.link_eat)      
+      blueInfo = font.render(text, 0, py.Color('black'))
+      textLocation = py.Rect(190, 825, WIDTH/5, 70)
+      surface.blit(blueInfo, textLocation)    
+      
+      text = 'virus: ' + str(Blue.virus_eat)
+      blueInfo = font.render(text, 0, py.Color('black'))
+      textLocation = py.Rect(190, 855, WIDTH/5, 70)
+      surface.blit(blueInfo, textLocation)  
+      
+      text = 'link: ' + str(Yellow.link_eat)
+      yellowInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(340, 825, WIDTH/5, 70)
+      surface.blit(yellowInfo, textLocation)
+      
+      text = 'virus: ' + str(Yellow.virus_eat)
+      yellowInfo = font.render(text, 1, py.Color('black'))
+      textLocation = py.Rect(340, 855, WIDTH/5, 70)
+      surface.blit(yellowInfo, textLocation)
+      
+      
     
   def drawSquare(self, surface):
     # god view
