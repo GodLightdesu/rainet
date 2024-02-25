@@ -284,6 +284,27 @@ class Game:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
     
     elif self.view == 'blue':
+      # draw yellow pieces in blue server
+      if len(self.Blue.serverStack) != 0:
+        for y in range(len(self.Blue.serverStack)):
+          piece = self.Blue.serverStack[y]
+
+          if piece.checked:
+            img = py.image.load(piece.texture)
+          else: img = py.image.load(Unknown('yellow').texture)
+          img_center = 28 + y * SQ_SIZE + SQ_SIZE//2, 95+BSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
+      
+      # draw blue pieces in yellow server
+      if len(self.Yellow.serverStack) != 0:
+        for b in range(len(self.Yellow.serverStack)):
+          piece = self.Yellow.serverStack[b]
+          
+          img = py.image.load(piece.texture)
+          img_center = 28 + b * SQ_SIZE + SQ_SIZE//2, 95+YSERVERROL*SQ_SIZE + SQ_SIZE//2
+          piece.texture_rect = img.get_rect(center=img_center)
+          surface.blit(img, piece.texture_rect)
       
       # draw board
       for row in range(ROWS):
