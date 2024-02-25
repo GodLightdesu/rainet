@@ -7,6 +7,7 @@ from move import Move
 from skill import Skill
 
 import sys
+import copy
 
 class Main:
   def __init__(self, yellowInit:str, blueInit:str, yellowID:str=None, blueID:str=None) -> None:
@@ -175,10 +176,16 @@ class Main:
             clicker = self.game.clicker
             skill = Skill()
           
+          # change view of board when 'v' pressed
+          if event.key == py.K_v:
+            pass
+          
           # primt console board when 'b' pressed
           if event.key == py.K_b:
             print('---------------')
             board.printBoard()
+            print('---------------')
+            board.printBoard('blue')
             print('---------------')
           
           # print detail game info when 'i' pressed

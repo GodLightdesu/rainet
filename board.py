@@ -4,6 +4,7 @@ from move import Move
 from const import *
 from square import *
 from piece import *
+import copy
 
 class Board:
   
@@ -13,6 +14,9 @@ class Board:
     self._create()
     self._add_Piece('yellow')
     self._add_Piece('blue')
+    
+    self.blueBoard = copy.copy(self.squares)
+    self.blueBoard.reverse()
   
   def isEnterServer(self, player: object, endSq: object):
     return endSq.is_ally_exit(player.color)
@@ -211,16 +215,22 @@ class Board:
   def onBoard(self, row, col) -> bool:
     return 0 <= row <= 9 and 0 <= col <= 7
   
-  def printBoard(self):
+  def printboard(self, board):
     for row in range(ROWS):
       for col in range(COLS):
-        if self.squares[row][col].boundary:
+        if board[row][col].boundary:
           print('#', end=' ')
           continue
-        if self.squares[row][col].piece is not None:
-          print(self.squares[row][col].piece.name[0], end=' ')
+        if board[row][col].piece is not None:
+          print(board[row][col].piece.name[0], end=' ')
         else: print('-', end=' ')
       print()
+  
+  def printBoard(self, color: str='yellow'):
+    if color == 'yellow':
+      self.printboard(self.squares)
+    elif color == 'blue':
+      self.printboard(self.blueBoard)
   
   def getLBpiecePos(self, color):
     for row in range(ROWS):

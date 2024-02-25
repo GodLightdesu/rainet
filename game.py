@@ -137,7 +137,7 @@ class Game:
     surface.blit(yellowInfo, textLocation)    
     
   def drawSquare(self, surface, view:str):
-    # god view or yellow view
+    # god view
     if view == 'god':
       # draw yellow pieces in server
       if len(self.Yellow.serverStack) != 0:

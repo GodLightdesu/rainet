@@ -6,6 +6,6 @@ if __name__ == '__main__':
   blueID = 'Daru'
   
   yellowInit = 'llvvvvll'
-  blueInit = 'llvvvvll' # 'vvllllvv'
+  blueInit = 'vvllllvv' # 'vvllllvv'
   main = Main(yellowInit, blueInit, yellowID, blueID)
   main.Gback()
