@@ -1,5 +1,6 @@
 import pygame as py
 from pygame.locals import *
+from typing import Literal
 
 from const import *
 from game import Game
@@ -10,7 +11,9 @@ import sys
 import copy
 
 class Main:
-  def __init__(self, yellowInit:str, blueInit:str, yellowID:str=None, blueID:str=None) -> None:
+  def __init__(self, yellowInit: str, blueInit: str, 
+               yellowID: str='yellow', blueID: str='blue',
+               view: Literal['god', 'yellow', 'blue']='god') -> None:
     if (self.checkPieceInit(yellowInit) == False or 
         self.checkPieceInit(blueInit) == False):
       raise ValueError('Invalid piece init, please try again')
@@ -20,7 +23,8 @@ class Main:
     py.display.set_caption('Rai-Net')
     self.clock = py.time.Clock()
     
-    self.game = Game(yellowInit, blueInit, yellowID, blueID)
+    self.view = view
+    self.game = Game(yellowInit, blueInit, yellowID, blueID, view)
     self.yellowInit = yellowInit
     self.blueInit = blueInit
     self.yellowID = yellowID
@@ -28,6 +32,10 @@ class Main:
     
     # only do this once, before the while loop
     self.game.loadImages()
+
+  def main(self):
+    if self.view == 'god' or self.view == 'yellow': self.Gback()
+    elif self.view == 'blue': self.blueGback
 
   def checkPieceInit(self, pieceInit:str):
     v, l = 0, 0
@@ -38,8 +46,13 @@ class Main:
     if v != 4 or l != 4:  return False
     else: return True
   
+  def blueGback(self):
+    pass
   
   def Gback(self):
+    '''
+    for god view or yellow view
+    '''
     screen = self.screen
     game = self.game
     board = self.game.board

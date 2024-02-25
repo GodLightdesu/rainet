@@ -21,7 +21,7 @@ class Board:
   def isEnterServer(self, player: object, endSq: object):
     return endSq.is_ally_exit(player.color)
   
-  def enterServer(self, player: object, piece: object):
+  def enterServer(self, player: object, enemy: object, piece: object):
     if piece.lb:
       player.skills['lb']['used'] = False
 
@@ -29,10 +29,10 @@ class Board:
     if piece.name == 'link':  player.link_enter += 1
     elif piece.name == 'virus': player.virus_enter += 1
     
-    player.serverStack.append(piece)
+    enemy.serverStack.append(piece)
     
-  def leaveServer(self, player: object):
-    piece = player.serverStack.pop()
+  def leaveServer(self, player: object, enemy: object):
+    piece = enemy.serverStack.pop()
     
     if piece.lb:
       player.skills['lb']['used'] = True
@@ -78,7 +78,7 @@ class Board:
     
     # game info update
     if self.isEnterServer(player, endsq): # enter server
-      self.enterServer(player, piece)
+      self.enterServer(player, enemy, piece)
     
     if endsq.has_enemy_piece(player.color): # end square is enemy piece
       self.capturePiece(player, enemy, endPiece)
@@ -115,7 +115,7 @@ class Board:
       
       # update info
       if self.isEnterServer(game.player, endSq):
-        self.leaveServer(game.player)
+        self.leaveServer(game.player, game.enemy)
       elif endSq.has_enemy_piece(game.player.color):
         self.unCapturePiece(game.player, game.enemy, endSq.piece)
   
