@@ -24,9 +24,15 @@ class Clicker:
     clicked_col = (self.mouseX-31)//SQ_SIZE
     return clicked_row, clicked_col
   
-  def saveInitial(self, pos):
-    self.initial_row = (pos[1] - 98) // SQ_SIZE
-    self.initial_col = (pos[0] - 31) // SQ_SIZE
+  def convertBlueRow(self, row):
+    return BROW[row]
+  
+  def convertBlueCol(self, col):
+    return BCOL[col]
+  
+  def saveInitial(self, row, col):
+    self.initial_row = row
+    self.initial_col = col
   
   def selectPiece(self, piece):
     self.piece = piece

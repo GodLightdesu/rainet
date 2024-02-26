@@ -376,7 +376,8 @@ class Game:
       # loop all valid moves
       for move in piece.moves:
         if move.startRow == r and move.startCol == c:
-          surface.blit(s, (32.5+move.endCol*SQ_SIZE, 98+move.endRow*SQ_SIZE)) 
+          row = self.clicker.convertBlueRow(move.endRow)
+          surface.blit(s, (32.5+move.endCol*SQ_SIZE, 98+row*SQ_SIZE)) 
   
   # game method
   def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str):

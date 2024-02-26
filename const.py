@@ -54,3 +54,13 @@ BSKILLSROW = {
   2 : 'vc',
   1 : '404'
 }
+
+ROW = [row for row in range(ROWS)]
+COL = [col for col in range(COLS)]
+
+BROW = ROW
+BROW.reverse()
+
+BCOL = COL
+BCOL.reverse()
+
