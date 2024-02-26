@@ -1,4 +1,4 @@
-from main import Main
+from modules.main import Main
 
 # run game
 if __name__ == '__main__':
