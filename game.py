@@ -36,6 +36,8 @@ class Game:
     self.player = self.players[(self.turn + 1) % 2]
     self.enemy = self.players[self.turn % 2]
     
+    self.displayOption = False
+    
     # move init
     self.move = None
     self.moveMade = False
@@ -382,6 +384,22 @@ class Game:
           if self.view == 'blue': row = self.clicker.convertBlueRow(move.endRow)
           else: row = move.endRow
           surface.blit(s, (32.5+move.endCol*SQ_SIZE, 98+row*SQ_SIZE)) 
+    
+    if self.displayOption:
+      font = py.font.SysFont(os.path.join('assets/font/SoukouMincho.ttf'), 45, True, False)
+      
+      text = 'swap?'
+      blueInfo = font.render(text, 1, py.Color('black'))
+      surface.blit(blueInfo, (32.5+3.2*SQ_SIZE, 98+4*SQ_SIZE))
+      
+      text = 'Yes'
+      blueInfo = font.render(text, 1, py.Color('black'))
+      surface.blit(blueInfo, (32.5+3*SQ_SIZE, 98+5*SQ_SIZE))
+      
+      
+      text = 'No'
+      blueInfo = font.render(text, 1, py.Color('black'))
+      surface.blit(blueInfo, (32.5+4*SQ_SIZE, 98+5*SQ_SIZE))
   
   # game method
   def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str,

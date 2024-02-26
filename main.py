@@ -77,8 +77,8 @@ class Main:
               brow, bcol = clicker.getRowCol()
               clicked_row, clicked_col = clicker.convertBlueRow(brow), bcol
             
-            print(clicked_row, clicked_col)
-            
+            # print(clicked_row, clicked_col)
+
             # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
               print('cancel use skill')
@@ -91,12 +91,13 @@ class Main:
               if clicker.selected_piece:
                 clicker.piece.clear_moves()
               
+              # get which skill use
               if game.player.color == 'yellow' and 5 <= clicked_row <= 8:
                 game.whichSkill = YSKILLSROW[clicked_row]
               elif  game.player.color == 'blue' and 1 <= clicked_row <= 4:
                 game.whichSkill = BSKILLSROW[clicked_row]
               
-              # not clicked in skills
+              # check clicked in skills
               if game.whichSkill is None:  game.useSkill = False
               else: game.useSkill = True
               # print(game.whichSkill)
@@ -108,18 +109,47 @@ class Main:
               
               # need two clicks
               if game.whichSkill == '404':
+                # display option of either swap or not after selected two piece
                 if len(clicker.playerClicks) == 2:
                   target0 = clicker.playerClicks[0]
                   target1 = clicker.playerClicks[1]
-                  game.skillUsed = skill.use(game, game.whichSkill, target0, target1)
-                  clicker.claerPlayerClicks()
-                
-                  # not valid target
-                  if not game.skillUsed:
-                    clicker.claerPlayerClicks()
+                  row0, col0 = target0
+                  row1, col1 = target1
+                  targetSq0 = board.squares[row0][col0]
+                  targetSq1 = board.squares[row1][col1]
+                  if targetSq0.has_ally_piece(game.player.color) and targetSq1.has_ally_piece(game.player.color):
+                    game.displayOption = True
+                  else: 
                     game.whichSkill = None
                     game.useSkill = False
               
+                # use skill
+                elif len(clicker.playerClicks) == 3:
+                  target0 = clicker.playerClicks[0]
+                  target1 = clicker.playerClicks[1]
+                  row, col = clicker.playerClicks[2]
+                  if self.view == 'blue': row = game.clicker.convertBlueRow(row)
+                  
+                  if row == 5 and col == 3: skill.swap = True
+                  elif row == 5 and col == 4: skill.swap = False
+                  else:
+                    print('cancel use skill')
+                    game.displayOption = False
+                    game.whichSkill = None
+                    game.useSkill = False
+                    continue
+                  
+                  # after choose pieces and either swap or not
+                  game.displayOption = False
+                  game.skillUsed = skill.use(game, game.whichSkill, target0, target1, skill.swap)
+                  clicker.claerPlayerClicks()
+                  
+                  # not valid target
+                  if not game.skillUsed:
+                    # clicker.claerPlayerClicks()
+                    game.whichSkill = None
+                    game.useSkill = False
+                    
               # only need one click
               else:
                 target0 = (clicked_row, clicked_col)
@@ -129,26 +159,38 @@ class Main:
                 # not valid target
                 if not game.skillUsed:
                   clicker.claerPlayerClicks()
+                  game.displayOption = False
                   game.whichSkill = None
                   game.useSkill = False
 
             
             # after selected piece and clicked square to move
             elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
-              startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
-              endsq = game.board.squares[clicked_row][clicked_col]
-              
-              game.move = Move(startsq, endsq)
-              if board.validMove(clicker.piece, game.move):
+              # get another piece
+              if board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color):
+                clicker.piece.clear_moves()
+                clicker.unselectPiece()
                 
-                board.move(game.player, game.enemy, clicker.piece, game.move)
-                game.moveMade = True
+                piece = board.squares[clicked_row][clicked_col].piece   
+                board.calc_moves(piece, clicked_row, clicked_col)
+                clicker.saveInitial(clicked_row, clicked_col)
+                clicker.selectPiece(piece)
               
-              # else: print('Invalid move')
+              else:
+                startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
+                endsq = game.board.squares[clicked_row][clicked_col]
+                
+                game.move = Move(startsq, endsq)
+                if board.validMove(clicker.piece, game.move):
+                  
+                  board.move(game.player, game.enemy, clicker.piece, game.move)
+                  game.moveMade = True
               
-              # not display the valid moves of selected piece
-              clicker.piece.clear_moves()
-              clicker.unselectPiece()  # unselect piece either moved or not
+                # else: print('Invalid move')
+                
+                # not display the valid moves of selected piece
+                clicker.piece.clear_moves()
+                clicker.unselectPiece()  # unselect piece either moved or not
             
             # if clicked square has a piece ? -> move
             elif (board.onBoard(clicked_row, clicked_col) and 

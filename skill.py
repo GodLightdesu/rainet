@@ -1,4 +1,5 @@
 import os
+import copy
 
 from const import *
 
@@ -17,7 +18,7 @@ class FireWall():
 class Skill:
   
   def __init__(self) -> None:
-    pass
+    self.swap = None
     
   def undoSkill(self, game: object):
     '''
@@ -57,7 +58,10 @@ class Skill:
       game.player.skills['vc']['used'] = False
     
     def undo404():
-      pass
+      game.message = game.player.name + ' undo 404'
+      piece1 = game.player.skills['404']['log'].pop()
+      piece0 = game.player.skills['404']['log'].pop()
+      swap = game.player.skills['404']['log'].pop()
     
     skillUndo = {
       'lb' : undoLB,
@@ -73,11 +77,11 @@ class Skill:
       
       skillUndo[skill]()
   
-  def use(self, game: object, which: str, target0: tuple, target1: tuple=None) -> bool:
+  def use(self, game: object, which: str, target0: tuple, target1: tuple=None, swap=None) -> bool:
     '''
-    target0 -> row, col
-    target1 -> row, col
-    input must be on board
+    - target0 -> row, col
+    - target1 -> row, col
+    - input must be on board
     '''
     def useLB() -> bool:
       row, col = target0
@@ -137,8 +141,48 @@ class Skill:
         return True
 
     def use404() -> bool:
-      # NotFound(color)
-      return True
+      row0, col0 = target0
+      row1, col1 = target1
+      targetSq0 = board.squares[row0][col0]
+      targetSq1 = board.squares[row1][col1]
+      
+      if (player.skills['404']['used'] or 
+          not targetSq0.has_ally_piece(player.color) or 
+          not targetSq1.has_ally_piece(player.color)):
+        return False
+      
+      else:
+        # store lb position
+        if board.squares[row0][col0].piece.lb: lb = row0, col0
+        elif board.squares[row1][col1].piece.lb: lb = row1, col1
+        else: lb = None
+        
+        player.skills['404']['log'].append(swap)
+        player.skills['404']['log'].append(board.squares[row0][col0].piece)
+        player.skills['404']['log'].append(board.squares[row1][col1].piece)
+        
+        # clear status of pieces
+        board.squares[row0][col0].piece.lb = False
+        board.squares[row1][col1].piece.lb = False
+        board.squares[row0][col0].piece.checked = False
+        board.squares[row1][col1].piece.checked = False
+        
+        # swap piece
+        if swap is not None and swap:
+          temp = copy.deepcopy(board.squares[row1][col1].piece)
+          board.squares[row1][col1].piece = board.squares[row0][col0].piece
+          board.squares[row0][col0].piece = temp
+        '''other method'''
+        # board.squares[row0][col0].piece, board.squares[row1][col1].piece = board.squares[row1][col1].piece, board.squares[row0][col0].piece
+        
+        # install lb back
+        if lb is not None:
+          lbrow, lbcol = lb
+          board.squares[lbrow][lbcol].piece.lb = True
+        
+        player.skills['404']['used'] = True
+        return True
+        
 
     skills = {
       'lb' : useLB,
