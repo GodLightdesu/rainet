@@ -139,5 +139,5 @@ class Skill:
       used = skills[which]()
       if used: 
         player.skillLog.append(which)
-        print(player.skills[which]['log'])
+        # print(player.skills[which]['log'])
       return used

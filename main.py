@@ -99,11 +99,11 @@ class Main:
               # not clicked in skills
               if game.whichSkill is None:  game.useSkill = False
               else: game.useSkill = True
-              print(game.whichSkill)
+              # print(game.whichSkill)
             
             # use skill (which) when player choosed to use skill
             elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
-              print('use skill')
+              # print('use skill')
               clicker.savePlayerClicks(clicked_row, clicked_col)
               
               # need two clicks

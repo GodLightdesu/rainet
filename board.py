@@ -140,7 +140,7 @@ class Board:
       - boundary     -> False
       - enemy server -> False
       '''
-      if 0 <= endRow < 10 and 0 <= endCol < 8:
+      if self.onBoard(endRow, endCol):
         if self.squares[endRow][endCol].can_pass(piece.color): valid = True
         else: valid = False
       else: valid = False
@@ -178,6 +178,7 @@ class Board:
         # vertival or horizontal move
         if len(check[possible_move]) == 1:
           eRow, eCol = check[possible_move][0]
+          if not self.onBoard(eRow, eCol): continue
           eSq = self.squares[eRow][eCol]
           if isValidMove(eRow, eCol):
             self.add_moveToPiece(piece, startRow, startCol, eRow, eCol)
@@ -192,6 +193,7 @@ class Board:
           # count no of blocked
           for check_move in check[possible_move]:    
             eRow, eCol = check_move
+            if not self.onBoard(eRow, eCol): continue
             eSq = self.squares[eRow][eCol]
 
             if eSq.isBlocked(piece.color):
