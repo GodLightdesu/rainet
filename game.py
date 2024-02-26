@@ -80,7 +80,11 @@ class Game:
     IMAGES['LB'] = py.transform.scale(py.image.load('assets/images/' + 'LB' + '.png'), (52, 52))
     IMAGES['shield'] = py.transform.scale(py.image.load('assets/images/' + 'shield' + '.png'), (80, 88))
     IMAGES['checked'] = py.transform.scale(py.image.load('assets/images/' + 'checked' + '.png'), (52, 56))
-    IMAGES['target'] = py.transform.scale(py.image.load('assets/images/' + 'target' + '.png'), (56, 56))
+    # IMAGES['target'] = py.transform.scale(py.image.load('assets/images/' + 'target' + '.png'), (56, 56))
+    IMAGES['LB'].convert()
+    IMAGES['LB'].set_alpha(170)
+    IMAGES['checked'].convert()
+    IMAGES['checked'].set_alpha(150)
     
     # init skills' image
     for skill in SKILLS:

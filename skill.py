@@ -69,7 +69,11 @@ class Skill:
       skillUndo[skill]()
   
   def use(self, game: object, which: str, target0: tuple, target1: tuple=None) -> bool:
-    
+    '''
+    target0 -> row, col
+    target1 -> row, col
+    input must be on board
+    '''
     def useLB() -> bool:
       row, col = target0
       targetSq = board.squares[row][col]
@@ -116,8 +120,16 @@ class Skill:
       else: return False
 
     def useVC() -> bool:
-      # VirusChecker(color)
-      return True
+      row, col = target0
+      targetSq = board.squares[row][col]
+      
+      if not targetSq.has_enemy_piece(player.color) or player.skills['vc']['used']:
+        return False
+      else:
+        board.squares[row][col].piece.checked = True
+        player.skills['vc']['used'] = True
+        player.skills['vc']['log'].append((row, col))
+        return True
 
     def use404() -> bool:
       # NotFound(color)
