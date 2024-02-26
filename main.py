@@ -181,8 +181,7 @@ class Main:
                 board.undoMove(game)
                 game.message = game.player.name + ' Undo move'
                 game.gameOver = False
-              
-          
+       
           # reset the game when 'r' pressed
           if event.key == py.K_r:
             game.reset(self.yellowInit, self.blueInit, self.yellowID, self.blueID, self.view)
@@ -192,7 +191,7 @@ class Main:
             clicker = self.game.clicker
             skill = Skill()
           
-          # change game mode (cheat / not) when 'c' pressed
+          # change game mode (cheat / normal) when 'c' pressed
           if event.key == py.K_c:
             self.cheat = not self.cheat
             print('Game mode ->', 'cheat' if self.cheat else 'normal')
@@ -206,7 +205,7 @@ class Main:
               self.view = game.nextView(AVIEWS, self.view)
               game.view = game.nextView(AVIEWS, game.view)
           
-          # primt console board when 'b' pressed
+          # print console board when 'b' pressed
           if event.key == py.K_b:
             print('---------------')
             board.printBoard()
