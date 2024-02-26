@@ -168,13 +168,17 @@ class Main:
             elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
               # get another piece
               if board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color):
-                clicker.piece.clear_moves()
-                clicker.unselectPiece()
-                
-                piece = board.squares[clicked_row][clicked_col].piece   
-                board.calc_moves(piece, clicked_row, clicked_col)
-                clicker.saveInitial(clicked_row, clicked_col)
-                clicker.selectPiece(piece)
+                if (clicked_row, clicked_col) != (clicker.initial_row, clicker.initial_col):
+                  clicker.piece.clear_moves()
+                  clicker.unselectPiece()
+                  
+                  piece = board.squares[clicked_row][clicked_col].piece   
+                  board.calc_moves(piece, clicked_row, clicked_col)
+                  clicker.saveInitial(clicked_row, clicked_col)
+                  clicker.selectPiece(piece)
+                else:
+                  clicker.piece.clear_moves()
+                  clicker.unselectPiece()
               
               else:
                 startsq = game.board.squares[clicker.initial_row][clicker.initial_col]

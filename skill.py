@@ -24,6 +24,7 @@ class Skill:
     '''
     undo must after a skill used and it is not reversible
     '''
+    
     def undoLB():
       game.message = game.player.name + ' undo LB'
       # print(game.player.name + ' undo LB')
@@ -59,9 +60,15 @@ class Skill:
     
     def undo404():
       game.message = game.player.name + ' undo 404'
+      posInfo = game.player.skills['404']['log'].pop()
       piece1 = game.player.skills['404']['log'].pop()
       piece0 = game.player.skills['404']['log'].pop()
-      swap = game.player.skills['404']['log'].pop()
+      row0, col0 = posInfo[0]
+      row1, col1 = posInfo[1]
+      game.board.squares[row0][col0].piece = piece0
+      game.board.squares[row1][col1].piece = piece1
+      game.player.skills['404']['used'] = False
+      # checked ?
     
     skillUndo = {
       'lb' : undoLB,
@@ -83,6 +90,7 @@ class Skill:
     - target1 -> row, col
     - input must be on board
     '''
+    
     def useLB() -> bool:
       row, col = target0
       targetSq = board.squares[row][col]
@@ -157,9 +165,10 @@ class Skill:
         elif board.squares[row1][col1].piece.lb: lb = row1, col1
         else: lb = None
         
-        player.skills['404']['log'].append(swap)
-        player.skills['404']['log'].append(board.squares[row0][col0].piece)
-        player.skills['404']['log'].append(board.squares[row1][col1].piece)
+        # store swap info for undo
+        player.skills['404']['log'].append(copy.deepcopy(board.squares[row0][col0].piece))
+        player.skills['404']['log'].append(copy.deepcopy(board.squares[row1][col1].piece))
+        player.skills['404']['log'].append([(row0, col0), (row1, col1)])
         
         # clear status of pieces
         board.squares[row0][col0].piece.lb = False

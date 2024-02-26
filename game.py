@@ -92,6 +92,8 @@ class Game:
     for skill in SKILLS:
       IMAGES['blue_' + skill] = py.transform.scale(py.image.load('assets/images/blue_' + skill + '.png'), (PIECE_SIZE, PIECE_SIZE))
       IMAGES['yellow_' + skill] = py.transform.scale(py.image.load('assets/images/yellow_' + skill + '.png'), (PIECE_SIZE, PIECE_SIZE))
+      IMAGES['blue_' + skill].convert()
+      IMAGES['yellow_' + skill].convert()
       
   # display method
   def drawText(self, surface, text:str):
@@ -338,6 +340,18 @@ class Game:
               surface.blit(IMAGES['checked'], (38+col*SQ_SIZE, 103.5+row*SQ_SIZE))
     
   def drawSkills(self, surface, Yellow:object, Blue:object):
+    if self.players[0].skills['lb']['used']: IMAGES['yellow_lb'].set_alpha(100)
+    else: IMAGES['yellow_lb'].set_alpha(255)
+    
+    if self.players[0].skills['fw']['used']: IMAGES['yellow_fw'].set_alpha(100)
+    else: IMAGES['yellow_fw'].set_alpha(255)
+    
+    if self.players[1].skills['lb']['used']: IMAGES['blue_lb'].set_alpha(100)
+    else: IMAGES['blue_lb'].set_alpha(255)
+    
+    if self.players[1].skills['fw']['used']: IMAGES['blue_fw'].set_alpha(100)
+    else: IMAGES['blue_fw'].set_alpha(255)
+    
     if self.view == 'god' or self.view == 'yellow':
       # will display constantly
       surface.blit(IMAGES['blue_fw'], (38+9*SQ_SIZE, 103.5+3*SQ_SIZE))
