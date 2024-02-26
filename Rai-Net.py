@@ -7,5 +7,5 @@ if __name__ == '__main__':
   
   yellowInit = 'vvllvvll'
   blueInit = 'vvllvvll' # 'vvllllvv'
-  main = Main(yellowInit, blueInit, yellowID, blueID, view='blue')
+  main = Main(yellowInit, blueInit, yellowID, blueID, view='blue', cheat=False)
   main.Gback()

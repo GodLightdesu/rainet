@@ -188,7 +188,6 @@ class Game:
       textLocation = py.Rect(340, 855, WIDTH/5, 70)
       surface.blit(yellowInfo, textLocation)
       
-    
   def drawSquare(self, surface):
     # god view
     if self.view == 'god':
@@ -376,12 +375,14 @@ class Game:
       # loop all valid moves
       for move in piece.moves:
         if move.startRow == r and move.startCol == c:
-          row = self.clicker.convertBlueRow(move.endRow)
+          if self.view == 'blue': row = self.clicker.convertBlueRow(move.endRow)
+          else: row = move.endRow
           surface.blit(s, (32.5+move.endCol*SQ_SIZE, 98+row*SQ_SIZE)) 
   
   # game method
-  def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str):
-    self.__init__(yellowInit, blueInit, yellowID, blueID)
+  def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str,
+               view: Literal['god', 'yellow', 'blue']='god'):
+    self.__init__(yellowInit, blueInit, yellowID, blueID, view)
     
   def checkGameOver(self):
     yLink = self.Yellow.link_eat + self.Yellow.link_enter
@@ -427,7 +428,12 @@ class Game:
     self.updateInfo()
     
     # print(self.gamelog)
-    
+  
+  def nextView(self, lst: list, element: str):
+   idx = lst.index(element)
+   if idx + 1 >= len(lst): return lst[0]
+   else: return lst[idx +1]
+  
   # other method
   def getValidMoves(self) -> list:
     '''

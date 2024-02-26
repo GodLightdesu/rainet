@@ -12,7 +12,7 @@ import sys
 class Main:
   def __init__(self, yellowInit: str, blueInit: str, 
                yellowID: str='yellow', blueID: str='blue',
-               view: Literal['god', 'yellow', 'blue']='god') -> None:
+               view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
     '''
     ID is sugggested to be less or equal to 7 characters
     '''
@@ -26,6 +26,8 @@ class Main:
     self.clock = py.time.Clock()
     
     self.view = view
+    self.cheat = cheat
+    
     self.game = Game(yellowInit, blueInit, yellowID, blueID, view)
     self.yellowInit = yellowInit
     self.blueInit = blueInit
@@ -74,7 +76,8 @@ class Main:
               clicker.updateMouse(event.pos)
               brow, bcol = clicker.getRowCol()
               clicked_row, clicked_col = clicker.convertBlueRow(brow), bcol
-
+            
+            print(clicked_row, clicked_col)
             
             # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
@@ -182,16 +185,26 @@ class Main:
           
           # reset the game when 'r' pressed
           if event.key == py.K_r:
-            game.reset(self.yellowInit, self.blueInit, self.yellowID, self.blueID)
+            game.reset(self.yellowInit, self.blueInit, self.yellowID, self.blueID, self.view)
             screen = self.screen
             game = self.game
             board = self.game.board
             clicker = self.game.clicker
             skill = Skill()
           
+          # change game mode (cheat / not) when 'c' pressed
+          if event.key == py.K_c:
+            self.cheat = not self.cheat
+            print('Game mode ->', 'cheat' if self.cheat else 'normal')
+          
           # change view of board when 'v' pressed
           if event.key == py.K_v:
-            pass
+            if self.cheat:
+              self.view = game.nextView(VIEWS, self.view)
+              game.view = game.nextView(VIEWS, game.view)
+            else:
+              self.view = game.nextView(AVIEWS, self.view)
+              game.view = game.nextView(AVIEWS, game.view)
           
           # primt console board when 'b' pressed
           if event.key == py.K_b:

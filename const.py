@@ -2,6 +2,9 @@ MAX_FPS = 15
 IMAGES = {}
 SKILLS = ['lb', 'fw', 'vc', '404']
 
+VIEWS = ['god', 'yellow', 'blue']
+AVIEWS = ['yellow', 'blue']
+
 WIDTH = 615
 HEIGHT = 960
 COLS = 8
