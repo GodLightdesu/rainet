@@ -8,12 +8,14 @@ from move import Move
 from skill import Skill
 
 import sys
-import copy
 
 class Main:
   def __init__(self, yellowInit: str, blueInit: str, 
                yellowID: str='yellow', blueID: str='blue',
                view: Literal['god', 'yellow', 'blue']='god') -> None:
+    '''
+    ID is sugggested to be less or equal to 7 characters
+    '''
     if (self.checkPieceInit(yellowInit) == False or 
         self.checkPieceInit(blueInit) == False):
       raise ValueError('Invalid piece init, please try again')
@@ -162,27 +164,27 @@ class Main:
               
               # cancel use skill only when player choosed to use skill but not used
               if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
-                pass
+                print('cancel use skill')
+                game.whichSkill = None
+                game.useSkill = False
               
               # skills' col -> check which skill is clicked when player not choosed to use skill
               elif clicked_col == 9 and game.moveMade == False and game.useSkill == False:
-                pass
+                # not display the valid moves of selected piece if skill selected
+                if clicker.selected_piece:
+                  clicker.piece.clear_moves()
+                
+                if game.player.color == 'blue' and 5 <= clicked_row <= 8:
+                  game.whichSkill = YSKILLSROW[clicked_row]
+                elif  game.player.color == 'yellow' and 1 <= clicked_row <= 4:
+                  game.whichSkill = BSKILLSROW[clicked_row]
+                
+                # not clicked in skills
+                if game.whichSkill is None:  game.useSkill = False
+                else: game.useSkill = True
+                print(game.whichSkill)
               
-              # use skill (which) when player choosed to use skill
-              elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
-                print('use skill')
-                pass
-
               
-              # after selected piece and clicked square to move
-              elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
-                pass
-              
-              # if clicked square has a piece ? -> move
-              elif (board.onBoard(clicked_row, clicked_col) and 
-                    game.useSkill == False and game.skillUsed == False and 
-                    board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color)):
-                pass
           
         # key handler
         elif event.type == py.KEYDOWN:
