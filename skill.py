@@ -20,7 +20,9 @@ class Skill:
     pass
     
   def undoSkill(self, game: object):
-    
+    '''
+    undo must after a skill used and it is not reversible
+    '''
     def undoLB():
       game.message = game.player.name + ' undo LB'
       # print(game.player.name + ' undo LB')
@@ -49,7 +51,10 @@ class Skill:
         game.player.skills['fw']['used'] = True
       
     def undoVC():
-      pass
+      game.message = game.player.name + ' undo VC'
+      row, col = game.player.skills['vc']['log'].pop()
+      game.board.squares[row][col].piece.checked = False
+      game.player.skills['vc']['used'] = False
     
     def undo404():
       pass
