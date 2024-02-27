@@ -1,6 +1,5 @@
 import sys, os
 import pygame as py
-from pygame.locals import *
 from typing import Literal
 
 from .const import *
@@ -13,16 +12,12 @@ class Main:
                view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
     if player1 is None or player2 is None or player1.color == player2.color:
       raise ValueError('Invalid Player, please try again')
-    
-    py.init()
-    self.screen = py.display.set_mode((750, 960), RESIZABLE)
-    py.display.set_caption('Rai-Net')
-    self.clock = py.time.Clock()
-    
+
     self.view = view
     self.cheat = cheat
     
     self.game = Game(player1, player2, view)
+    self.clock = self.game.clock
     
     # True if yellow is human, elif yellow is AI -> False
     self.humanOne = player1.isHuman if player1.color == 'yellow' else player2.isHuman
@@ -37,7 +32,7 @@ class Main:
     '''
     for god view or yellow view
     '''
-    screen = self.screen
+    
     game = self.game
     board = self.game.board
     clicker = self.game.clicker
@@ -70,8 +65,6 @@ class Main:
               clicker.updateMouse(event.pos)
               brow, bcol = clicker.getRowCol()
               clicked_row, clicked_col = clicker.convertBlueRow(brow), bcol
-            
-            # print(clicked_row, clicked_col)
 
             # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
@@ -157,13 +150,13 @@ class Main:
                   game.whichSkill = None
                   game.useSkill = False
 
-            
+
+
             # after selected piece and clicked square to move
             elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
               
-              # get another piece
-              if board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color):
-                
+              # get another ally piece
+              if board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color):               
                 # different pieces
                 if (clicked_row, clicked_col) != (clicker.initial_row, clicker.initial_col):
                   clicker.piece.clear_moves()
@@ -179,6 +172,7 @@ class Main:
                   clicker.piece.clear_moves()
                   clicker.unselectPiece()
               
+              # square to move
               else:
                 startsq = game.board.squares[clicker.initial_row][clicker.initial_col]
                 endsq = game.board.squares[clicked_row][clicked_col]
@@ -188,6 +182,7 @@ class Main:
                   
                   board.move(game.player, game.enemy, clicker.piece, game.move)
                   game.moveMade = True
+                  game.animate = True
                 # else: print('Invalid move')
                 
                 # not display the valid moves of selected piece
@@ -213,14 +208,15 @@ class Main:
           # undo when 'z' is pressed
           if event.key == py.K_z: 
             if not game.Yellow.isHuman or not game.Blue.isHuman:
+              # undo for both that there is one is AI
               game.undo()
               game.undo()
             else: game.undo()
+            game.animate = False
        
           # reset the game when 'r' pressed
           if event.key == py.K_r:
             game.reset(game.Yellow, game.Blue, self.view)
-            screen = self.screen
             game = self.game
             board = self.game.board
             clicker = self.game.clicker
@@ -284,6 +280,7 @@ class Main:
         
         # moved
         if game.moveMade:
+          if game.animate:  game.animateMove(game.move)
           game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
           game.gamelog[game.turn] = game.move
@@ -298,8 +295,8 @@ class Main:
         
       # render game
       # game.message = 'test'
-      game.DrawGameState(screen)
-      game.drawText(screen, game.message)
+      game.DrawGameState()
+      game.drawText(game.message)
       # game.drawText(screen, game.player.name + ' ' + str(game.turn))
       
       # check winner

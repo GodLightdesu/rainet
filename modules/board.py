@@ -73,7 +73,7 @@ class Board:
     startsq = move.startsq
     endsq = move.endsq
     
-    startPiece = self.squares[startsq.row][startsq.col].piece
+    # startPiece = self.squares[startsq.row][startsq.col].piece
     endPiece = self.squares[endsq.row][endsq.col].piece
     
     # game info update
@@ -89,18 +89,8 @@ class Board:
     if not self.isEnterServer(player, endsq):  self.squares[endsq.row][endsq.col].piece = piece
     else: self.squares[endsq.row][endsq.col].piece = None
     
-    # print(self.squares[startsq.row][startsq.col].piece)
-    # print(self.squares[endsq.row][endsq.col].piece)
-
-    # move
-    piece.move = True
-    
     # clear valid moves
     piece.clear_moves()
-    
-    # set last move
-    # player.moveLog.append(move)
-    # self.moveLog.append(move)
 
   def undoMove(self, game: object):
     if len(game.movelog) != 0:

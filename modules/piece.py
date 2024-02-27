@@ -10,7 +10,7 @@ class Piece:
     self.lb = lb
     self.checked = checked
     self.moves = []
-    self.moved = False
+    # self.moved = False
     self.texture = texture
     self.set_texture()
     self.texture_rect = texture_rect

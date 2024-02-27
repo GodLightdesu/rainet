@@ -10,7 +10,8 @@ if __name__ == '__main__':
   blueInit = 'vvllvvll'
   
   player1 = Player('yellow', yellowInit, name='Kaito')
-  player2 = Okabe('blue', blueInit) # random move AI
+  player2 = Player('blue', blueInit, name='Daru')
+  # player2 = Okabe('blue', blueInit) # random move AI
   
-  main = Main(player1, player2, view='yellow', cheat=False)
+  main = Main(player1, player2, view='yellow', cheat=True)
   main.Gback()
