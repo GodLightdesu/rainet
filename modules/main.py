@@ -297,7 +297,6 @@ class Main:
       # game.message = 'test'
       game.DrawGameState()
       game.drawText(game.message)
-      # game.drawText(screen, game.player.name + ' ' + str(game.turn))
       
       # check winner
       winner = game.checkGameOver()

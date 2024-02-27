@@ -95,10 +95,10 @@ class Game:
     textLocation = py.Rect(0, 0, WIDTH, 70).move(WIDTH/2 - textObject.get_width()/2, 70/2 - textObject.get_height()/2)
     self.screen.blit(textObject, textLocation)
   
-  def DrawGameState(self):
+  def DrawGameState(self, exceptPiece:object=None, Srow=None, Scol=None):
     self.drawBoard()
     self.drawGameInfo(self.Yellow, self.Blue)
-    self.drawSquare()
+    self.drawSquare(exceptPiece, Srow, Scol)
     self.drawSkills(self.Yellow, self.Blue)
     self.showMoves()
   
@@ -209,7 +209,7 @@ class Game:
     self.screen.blit(img, (32.5+col*SQ_SIZE, 100+row*SQ_SIZE))
     self.screen.blit(IMAGES['shield'], (23+col*SQ_SIZE, 86+row*SQ_SIZE))
       
-  def drawSquare(self):
+  def drawSquare(self, exceptPiece: object=None, Srow=None, Scol=None):
     if self.view == 'god' or self.view == 'yellow':
       board = self.board.squares
       bServerRow = YSERVERROL
@@ -223,13 +223,13 @@ class Game:
     if len(self.Blue.serverStack) != 0:
       for y in range(len(self.Blue.serverStack)):
         piece = self.Blue.serverStack[y]
-        self.drawPiece( bServerRow, y, piece)
+        self.drawPiece(bServerRow, y, piece)
     
     # draw blue pieces in yellow server
     if len(self.Yellow.serverStack) != 0:
       for b in range(len(self.Yellow.serverStack)):
         piece = self.Yellow.serverStack[b]
-        self.drawPiece( yServerRow, b, piece)
+        self.drawPiece(yServerRow, b, piece)
     
     # draw board
     for row in range(ROWS):
@@ -242,8 +242,12 @@ class Game:
         # draw piece
         if board[row][col].has_piece():
           piece = board[row][col].piece
-          self.drawPiece(row, col, piece, drawStatus=True)
-  
+          # draw moving piece
+          if piece == exceptPiece: self.drawPiece(Srow, Scol, exceptPiece, drawStatus=True)
+          
+          # draw normal pieces
+          else: self.drawPiece(row, col, piece, drawStatus=True)
+
   def setSkillAlpha(self):
     if self.players[0].skills['lb']['used']: IMAGES['yellow_lb'].set_alpha(100)
     else: IMAGES['yellow_lb'].set_alpha(255)
@@ -324,14 +328,25 @@ class Game:
       self.screen.blit(blueInfo, (32.5+4*SQ_SIZE, 98+5*SQ_SIZE))
   
   def animateMove(self, move):
-    dR = move.endRow - move.startRow
+    
+    if self.view == 'blue': dR = BROW[move.endRow] - BROW[move.startRow]
+    else: dR = move.endRow - move.startRow
     dC = move.endCol - move.startCol
-    framesPerSquare = 10 # frames to move one squares
+    
+    framesPerSquare = 15 # frames to move one squares
     frameCount = (abs(dR) + abs(dC)) * framesPerSquare
     
     for frame in range(frameCount + 1):
-      pass
+      if self.view == 'blue':
+        r, c = (BROW[move.startRow] + dR * frame/frameCount, move.startCol + dC * frame/frameCount)
+      else: r, c = (move.startRow + dR * frame/frameCount, move.startCol + dC * frame/frameCount)
       
+      # draw piece
+      self.DrawGameState(move.pieceMoved, r, c)
+      
+      py.display.flip()
+      self.clock.tick(60)
+    
   # game method
   def initPiece(self, player: object):
     color = player.color
