@@ -14,6 +14,8 @@ Learning python for interest, hope I can add a AI engine in the future
 │   └── images
 │   └── screenshots
 ├── modules
+│   ├── AI
+│   │   └── Okabe.py
 │   ├── board.py
 │   ├── clicker.py
 │   ├── const.py
@@ -29,7 +31,7 @@ Learning python for interest, hope I can add a AI engine in the future
 
 Game images stored at folder `/assets/images/`;
 
-libraries  stored at folder `/modules/`;
+libraries stored at folder `/modules/`;
 
 ## Getting Started
 
@@ -62,6 +64,7 @@ if __name__ == '__main__':
 
 ## Version History
 
+* 1.1 Add a random move AI - Okabe (without skills)
 * 1.0
 * 0.1 - 0.9
   * Initial Release
@@ -80,7 +83,7 @@ if __name__ == '__main__':
   * [✓] virus check
   * [✓] 404
 * [ ] add a AI
-  * Okane
+  * [✓] Okane (random move only)
   * Daru
   * Christina
   * Faris
