@@ -217,8 +217,10 @@ class Board:
   def onBoard(self, row, col) -> bool:
     return 0 <= row <= 9 and 0 <= col <= 7
   
-  def printboard(self, board):
+  def printboard(self, board, Yellow, Blue):
+    print('-------------------')
     for row in range(ROWS):
+      print('|', end=' ')
       for col in range(COLS):
         if board[row][col].boundary:
           print('#', end=' ')
@@ -226,13 +228,23 @@ class Board:
         if board[row][col].piece is not None:
           print(board[row][col].piece.name[0], end=' ')
         else: print('-', end=' ')
-      print()
-  
-  def printBoard(self, color: str='yellow'):
+      print('|')
+    print('-------------------')
+    print('Yellow Server:', end=' ')
+    if len(Yellow.serverStack) != 0: print([piece.name[0] for piece in Yellow.serverStack], end=' ')
+    print()
+    print('Blue Server:', end=' ')
+    if len(Blue.serverStack) != 0: print([piece.name[0] for piece in Blue.serverStack], end=' ')
+    print()
+    print('-------------------')
+    
+  def printBoard(self, Yellow, Blue, color: str='yellow'):
     if color == 'yellow':
-      self.printboard(self.squares)
+      print('God and Yellow view:')
+      self.printboard(self.squares, Yellow, Blue)
     elif color == 'blue':
-      self.printboard(self.blueBoard)
+      print('Blue view:')
+      self.printboard(self.blueBoard, Yellow, Blue)
   
   def getLBpiecePos(self, color):
     for row in range(ROWS):

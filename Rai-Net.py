@@ -1,12 +1,16 @@
 from modules.main import Main
+from modules.player import Player
+from modules.AI.Okabe import Okabe
 
 # run game
 if __name__ == '__main__':
-  yellowID = 'Okabe'
-  blueID = 'Daru'
   
+  # 'vvllllvv'
   yellowInit = 'vvllvvll'
-  blueInit = 'vvllvvll' # 'vvllllvv'
+  blueInit = 'vvllvvll'
   
-  main = Main(yellowInit, blueInit, yellowID, blueID, view='yellow', cheat=False)
+  player1 = Player('yellow', yellowInit, name='Kaito')
+  player2 = Okabe('blue', blueInit) # random move AI
+  
+  main = Main(player1, player2, view='yellow', cheat=False)
   main.Gback()

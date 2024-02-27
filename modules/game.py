@@ -2,6 +2,8 @@ import pygame as py
 import os
 
 from typing import Literal
+
+from modules.skill import Skill
 from .player import Player
 from .board import Board
 from .clicker import Clicker
@@ -12,11 +14,12 @@ from .piece import *
 
 class Game:
   
-  def __init__(self, yellowInit: str, blueInit: str, 
-               yellowID: str='yellow', blueID: str='blue',
-               view: Literal['god', 'yellow', 'blue']='god') -> None:
+  def __init__(self, player1: object, player2: object,
+               view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
+    
     self.board = Board()
     self.clicker = Clicker()
+    self.skill = Skill()
     
     # game init
     self.message = ''
@@ -28,10 +31,9 @@ class Game:
     
     self.view = view
     self.next_player = 'yellow'
-    self.humanMove = True
     
-    self.Yellow = Player('yellow', yellowID)
-    self.Blue = Player('blue', blueID)
+    self.Yellow = player1
+    self.Blue = player2
     self.players = [self.Yellow, self.Blue]
     self.player = self.players[(self.turn + 1) % 2]
     self.enemy = self.players[self.turn % 2]
@@ -49,23 +51,10 @@ class Game:
     self.undoSkill = False
     
     # piece init
-    i = 0
-    for row, col in POS_INIT['yellow']:
-      if yellowInit[i] == 'l':
-        self.board.squares[row][col] = Square(row, col, Link('yellow'))
-        i += 1
-      elif yellowInit[i] == 'v':
-        self.board.squares[row][col] = Square(row, col, Virus('yellow'))
-        i += 1
+    self.initPiece(player1)
+    self.initPiece(player2)
     
-    i = 0
-    for row, col in POS_INIT['blue']:
-      if blueInit[i] == 'l':
-        self.board.squares[row][col] = Square(row, col, Link('blue'))
-        i += 1
-      elif blueInit[i] == 'v':
-        self.board.squares[row][col] = Square(row, col, Virus('blue'))
-        i += 1  
+    
     
   def loadImages(self):
     IMAGES['BG'] = py.transform.scale(py.image.load("assets/images/BG.png"), (750, HEIGHT))
@@ -416,9 +405,23 @@ class Game:
       surface.blit(blueInfo, (32.5+4*SQ_SIZE, 98+5*SQ_SIZE))
   
   # game method
-  def reset(self, yellowInit:str, blueInit:str, yellowID:str, blueID:str,
-               view: Literal['god', 'yellow', 'blue']='god'):
-    self.__init__(yellowInit, blueInit, yellowID, blueID, view)
+  def initPiece(self, player: object):
+    color = player.color
+    pieceInit = player.pieceInit
+    i = 0
+    for row, col in POS_INIT[color]:
+      if pieceInit[i] == 'l':
+        self.board.squares[row][col] = Square(row, col, Link(color))
+        i += 1
+      elif pieceInit[i] == 'v':
+        self.board.squares[row][col] = Square(row, col, Virus(color))
+        i += 1  
+  
+  def reset(self, player1: object, player2: object,
+               view: Literal['god', 'yellow', 'blue']='god') -> None:
+    player1.reset()
+    player2.reset()
+    self.__init__(player1, player2, view)
     
   def checkGameOver(self):
     yLink = self.Yellow.link_eat + self.Yellow.link_enter
@@ -433,6 +436,9 @@ class Game:
       if self.Blue.name is not None:  return self.Blue.name
       else: return self.Blue.color
     else: return None
+  
+  def yellowToMove(self):
+    return True if self.player.color == 'yellow' else False
   
   def switchPlayer(self):
     self.player = self.players[(self.turn + 1) % 2]
@@ -465,6 +471,21 @@ class Game:
     
     # print(self.gamelog)
   
+  def undo(self):
+    if len(self.gamelog) != 0:
+      last_key = list(self.gamelog)[-1]
+      last_value = self.gamelog[last_key]
+      
+      # uninstall terminal card
+      if last_value in SKILLS:
+        self.skill.undoSkill(self)
+      
+      # undo move
+      elif last_value not in SKILLS:
+        self.board.undoMove(self)
+        self.message = self.player.name + ' Undo move'
+        self.gameOver = False
+  
   def nextView(self, lst: list, element: str):
    idx = lst.index(element)
    if idx + 1 >= len(lst): return lst[0]
@@ -485,6 +506,7 @@ class Game:
             self.board.calc_moves(self.board.squares[r][c].piece, r, c)
             for move in self.board.squares[r][c].piece.moves:
               moves.append(move)
-              print(move.moveID)
-    print('No of valid moves:', len(moves))
+              # print(move.moveID)
+            self.board.squares[r][c].piece.clear_moves()
+    # print('No of valid moves:', len(moves))
     return moves

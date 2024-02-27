@@ -15,6 +15,7 @@ class Clicker:
     self.selected_piece = False
     self.piece = None
     
+    self.bClicked = 0
   
   def updateMouse(self, pos):
     self.mouseX, self.mouseY = pos

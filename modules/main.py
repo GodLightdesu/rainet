@@ -1,4 +1,4 @@
-import sys
+import sys, os
 import pygame as py
 from pygame.locals import *
 from typing import Literal
@@ -9,16 +9,11 @@ from .move import Move
 from .skill import Skill
 
 class Main:
-  def __init__(self, yellowInit: str, blueInit: str, 
-               yellowID: str='yellow', blueID: str='blue',
+  def __init__(self, player1: object, player2: object,
                view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
-    '''
-    ID is sugggested to be less or equal to 7 characters
-    '''
-    if (self.checkPieceInit(yellowInit) == False or 
-        self.checkPieceInit(blueInit) == False):
-      raise ValueError('Invalid piece init, please try again')
-  
+    if player1 is None or player2 is None or player1.color == player2.color:
+      raise ValueError('Invalid Player, please try again')
+    
     py.init()
     self.screen = py.display.set_mode((750, 960), RESIZABLE)
     py.display.set_caption('Rai-Net')
@@ -27,23 +22,16 @@ class Main:
     self.view = view
     self.cheat = cheat
     
-    self.game = Game(yellowInit, blueInit, yellowID, blueID, view)
-    self.yellowInit = yellowInit
-    self.blueInit = blueInit
-    self.yellowID = yellowID
-    self.blueID = blueID
+    self.game = Game(player1, player2, view)
+    
+    # True if yellow is human, elif yellow is AI -> False
+    self.humanOne = player1.isHuman if player1.color == 'yellow' else player2.isHuman
+    # same as above but for blue
+    self.humanTwo = player2.isHuman if player2.color == 'blue' else player1.isHuman
+    # print(self.humanOne, self.humanTwo)
     
     # only do this once, before the while loop
     self.game.loadImages()
-
-  def checkPieceInit(self, pieceInit:str):
-    v, l = 0, 0
-    for piece in pieceInit:
-      if piece == 'v':  v += 1
-      elif piece == 'l': l += 1
-    
-    if v != 4 or l != 4:  return False
-    else: return True
   
   def Gback(self):
     '''
@@ -53,9 +41,14 @@ class Main:
     game = self.game
     board = self.game.board
     clicker = self.game.clicker
-    skill = Skill()
+    skill = self.game.skill
+    
+    # clear screen before game run
+    os.system('clear')
     
     while True:
+      humanTurn = (self.humanOne and game.yellowToMove()) or (self.humanTwo and not game.yellowToMove())
+      
       # handle human input data
       for event in py.event.get():
         
@@ -66,7 +59,9 @@ class Main:
 
         # mouse handler
         elif event.type == py.MOUSEBUTTONDOWN:
-          if not game.gameOver:
+          
+          # human decision
+          if not game.gameOver and humanTurn:
             # view 'god' and 'yellow' use same board
             if self.view == 'god' or self.view == 'yellow':
               clicker.updateMouse(event.pos)
@@ -165,8 +160,11 @@ class Main:
             
             # after selected piece and clicked square to move
             elif game.useSkill == False and clicker.selected_piece and board.onBoard(clicked_row, clicked_col):
+              
               # get another piece
               if board.squares[clicked_row][clicked_col].has_ally_piece(game.player.color):
+                
+                # different pieces
                 if (clicked_row, clicked_col) != (clicker.initial_row, clicker.initial_col):
                   clicker.piece.clear_moves()
                   clicker.unselectPiece()
@@ -175,6 +173,8 @@ class Main:
                   board.calc_moves(piece, clicked_row, clicked_col)
                   clicker.saveInitial(clicked_row, clicked_col)
                   clicker.selectPiece(piece)
+                
+                # clicked same piece
                 else:
                   clicker.piece.clear_moves()
                   clicker.unselectPiece()
@@ -188,7 +188,6 @@ class Main:
                   
                   board.move(game.player, game.enemy, clicker.piece, game.move)
                   game.moveMade = True
-              
                 # else: print('Invalid move')
                 
                 # not display the valid moves of selected piece
@@ -213,33 +212,29 @@ class Main:
         elif event.type == py.KEYDOWN:
           # undo when 'z' is pressed
           if event.key == py.K_z: 
-            if len(game.gamelog) != 0:
-              last_key = list(game.gamelog)[-1]
-              last_value = game.gamelog[last_key]
-              
-              # uninstall terminal card
-              if last_value in SKILLS:
-                skill.undoSkill(game)
-              
-              # undo move
-              elif last_value not in SKILLS:
-                board.undoMove(game)
-                game.message = game.player.name + ' Undo move'
-                game.gameOver = False
+            if not game.Yellow.isHuman or not game.Blue.isHuman:
+              game.undo()
+              game.undo()
+            else: game.undo()
        
           # reset the game when 'r' pressed
           if event.key == py.K_r:
-            game.reset(self.yellowInit, self.blueInit, self.yellowID, self.blueID, self.view)
+            game.reset(game.Yellow, game.Blue, self.view)
             screen = self.screen
             game = self.game
             board = self.game.board
             clicker = self.game.clicker
-            skill = Skill()
+            skill = self.game.skill
           
           # change game mode (cheat / normal) when 'c' pressed
           if event.key == py.K_c:
             self.cheat = not self.cheat
             print('Game mode ->', 'cheat' if self.cheat else 'normal')
+            
+            # normal does not have god view
+            if not self.cheat and self.view == 'god':
+              self.view = game.nextView(VIEWS, self.view)
+              game.view = game.nextView(VIEWS, game.view)
           
           # change view of board when 'v' pressed
           if event.key == py.K_v:
@@ -250,13 +245,14 @@ class Main:
               self.view = game.nextView(AVIEWS, self.view)
               game.view = game.nextView(AVIEWS, game.view)
           
+          # clear the terminal output when 'space' pressed 
+          if event.key == py.K_SPACE:
+            os.system('clear')
+          
           # print console board when 'b' pressed
           if event.key == py.K_b:
-            print('---------------')
-            board.printBoard()
-            print('---------------')
-            board.printBoard('blue')
-            print('---------------')
+            board.printBoard(game.Yellow, game.Blue)
+            board.printBoard(game.Yellow, game.Blue, 'blue')
           
           # print detail game info when 'i' pressed
           if event.key == py.K_i:
@@ -276,8 +272,17 @@ class Main:
             
       # game logic
       if not game.gameOver:
+        # AI decision
+        if not humanTurn and not game.moveMade and not game.skillUsed:
+          validMoves = game.getValidMoves()
+          game.move = game.player.findRandomMove(validMoves)
+          piece = game.move.startsq.piece
+          
+          board.move(game.player, game.enemy, piece, game.move)
+          validMoves = None
+          game.moveMade = True
         
-        # human
+        # moved
         if game.moveMade:
           game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
@@ -290,8 +295,7 @@ class Main:
           game.skillLog[game.turn] = game.whichSkill
           game.gamelog[game.turn] = game.whichSkill
           game.nextPlayer()
-          
-      
+        
       # render game
       # game.message = 'test'
       game.DrawGameState(screen)
