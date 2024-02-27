@@ -58,12 +58,19 @@ if __name__ == '__main__':
   main.Gback()
 ```
 
+<!-- ### Functions Introduction
+
+```python
+
+``` -->
+
 ## Authors
 
 ^_*
 
 ## Version History
 
+* 1.3 Add function - aniamteMove
 * 1.1 Add a random move AI - Okabe (without skills)
 * 1.0
 * 0.1 - 0.9
@@ -91,6 +98,10 @@ if __name__ == '__main__':
 
 ## Acknowledgments
 
-### Images source
+Inspiration, code snippets, images source, etc.
 
-<https://github.com/FourProbiotics/RainetByCCC/blob/mybranch/assets/resources/Texture/Tex1.png>
+[Coding Spot](https://www.youtube.com/watch?v=OpL0Gcfn4B4&t=15084P)
+
+[Creating a Chess Engine in Python](https://youtube.com/playlist?list=PLBwF487qi8MGU81nDGaeNE1EnNEPYWKY_&si=L7rxLYA93rwiaS)
+
+[Images source](https://github.com/FourProbiotics/RainetByCCC/blob/mybranch/assets/resources/Texture/Tex1.png)
