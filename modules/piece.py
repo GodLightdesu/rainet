@@ -5,8 +5,9 @@ class Piece:
   def __init__(self, name:str, color:str, value:float, lb=False, checked=False, texture=None, texture_rect=None) -> None:
     self.name = name
     self.color = color
-    value_sign = 1 if color == 'yellow' else -1
-    self.value = value * value_sign
+    # value_sign = 1 if color == 'yellow' else -1
+    # self.value = value * value_sign
+    self.value = value
     self.lb = lb
     self.checked = checked
     self.moves = []
@@ -38,4 +39,4 @@ class Virus(Piece):
 class Unknown(Piece):
   
   def __init__(self, color:str, lb=False, checked=False) -> None:
-    super().__init__('unknown', color, 1.0, lb, checked)
+    super().__init__('unknown', color, 0.5, lb, checked)

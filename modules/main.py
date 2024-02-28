@@ -13,11 +13,13 @@ class Main:
                view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
     if yellow is None or blue is None or yellow.color == blue.color:
       raise ValueError('Invalid Player, please try again')
-
+    
     py.init()
     self.screen = py.display.set_mode((750, 960), RESIZABLE)
     py.display.set_caption('Rai-Net')
     self.clock = py.time.Clock()
+    
+    getcontext().prec = 6
     
     self.view = view
     self.cheat = cheat
@@ -218,6 +220,7 @@ class Main:
               game.undo()
               game.undo()
             else: game.undo()
+            game.clearValidMoves()
             game.animate = False
        
           # reset the game when 'r' pressed
@@ -244,7 +247,7 @@ class Main:
             if self.view == 'god' and not self.cheat:
               self.view = game.nextView(VIEWS, self.view)
               game.view = game.nextView(VIEWS, game.view)
-            if self.cheat:
+            elif self.cheat:
               self.view = game.nextView(VIEWS, self.view)
               game.view = game.nextView(VIEWS, game.view)
             else:
@@ -257,8 +260,7 @@ class Main:
           
           # print console board when 'b' pressed
           if event.key == py.K_b:
-            board.printBoard(game.Yellow, game.Blue)
-            board.printBoard(game.Yellow, game.Blue, 'blue')
+            board.printBoard(game.Yellow, game.Blue, self.view)
           
           # print detail game info when 'i' pressed
           if event.key == py.K_i:
@@ -285,6 +287,9 @@ class Main:
           # collect information for AI decision
           validMoves = game.getValidMoves()
           allyPieces = game.board.getAllyPieces(game.player.color)
+          score = game.player.scoreMaterial(game)
+          
+          print(score)
           
           # make decision
           decisions = game.player.decision(game, validMoves, allyPieces)

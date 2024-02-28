@@ -1,3 +1,5 @@
+from decimal import *
+
 MAX_FPS = 15
 IMAGES = {}
 SKILLS = ['lb', 'fw', 'vc', '404']
@@ -67,3 +69,8 @@ BROW.reverse()
 BCOL = COL
 BCOL.reverse()
 
+PIECEVALUE = {
+  'link' : Decimal(1.5),
+  'virus' : Decimal(0.5),
+  'unknown' : Decimal(1.0)
+}

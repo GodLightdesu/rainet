@@ -207,16 +207,16 @@ class Board:
   def onBoard(self, row, col) -> bool:
     return 0 <= row <= 9 and 0 <= col <= 7
   
-  def printboard(self, board, Yellow, Blue):
+  def printboard(self, board: object, Yellow: object, Blue: object, color: str):
     print('-------------------')
     for row in range(ROWS):
       print('|', end=' ')
       for col in range(COLS):
-        if board[row][col].boundary:
-          print('#', end=' ')
-          continue
-        if board[row][col].piece is not None:
-          if board[row][col].piece.color == 'yellow': print(board[row][col].piece.name[0].upper(), end=' ')
+        if board[row][col].boundary: print('#', end=' ')
+        elif board[row][col].piece is not None:
+          if color != 'god' and board[row][col].piece.color != color and not board[row][col].piece.checked: 
+            print('?', end=' ')
+          elif board[row][col].piece.color == 'yellow': print(board[row][col].piece.name[0].upper(), end=' ')
           else: print(board[row][col].piece.name[0], end=' ')
         else: print('-', end=' ')
       print('|')
@@ -229,13 +229,10 @@ class Board:
     print()
     print('-------------------')
     
-  def printBoard(self, Yellow, Blue, color: str='yellow'):
-    if color == 'yellow':
-      print('God and Yellow view:')
-      self.printboard(self.squares, Yellow, Blue)
-    elif color == 'blue':
-      print('Blue view:')
-      self.printboard(self.blueBoard, Yellow, Blue)
+  def printBoard(self, Yellow: object, Blue: object, color: str='yellow'):
+    print(f'{color} view:')
+    if color == 'yellow' or color == 'god': self.printboard(self.squares, Yellow, Blue, color)
+    elif color == 'blue': self.printboard(self.blueBoard, Yellow, Blue, color)
   
   def getLBpiecePos(self, color: str):
     for row in range(ROWS):
