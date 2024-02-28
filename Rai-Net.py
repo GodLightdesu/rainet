@@ -11,6 +11,8 @@ if __name__ == '__main__':
   
   # random move AI
   Yellow = RamdomMove('yellow', blueInit, name='Daruu', mode='Exit')
+  Yellow.setProb(0.1, 0.9)
+  
   # random choose a piece move to Exit
   Blue = Player('blue', yellowInit, name='Kaito')
   

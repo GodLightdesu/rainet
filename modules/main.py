@@ -282,17 +282,27 @@ class Main:
           # collect information for AI decision
           validMoves = game.getValidMoves()
           allyPieces = game.board.getAllyPieces(game.player.color)
-          game.player.returnMove(game, validMoves, allyPieces)
+          
+          # make decision
+          decisions = game.player.decision(game, validMoves, allyPieces)
+          # skill
+          if decisions['skill'] is not None:
+            game.whichSkill = decisions['skill'][0]
+            piece = decisions['skill'][1]
+            target0 = game.board.findPiecePos(piece)
+            game.skillUsed = skill.use(game, game.whichSkill, target0)
           
           # move
-          game.move = game.player.returnMove(game, validMoves, allyPieces)
-          piece = game.move.startsq.piece
-          board.move(game.player, game.enemy, piece, game.move)
+          elif decisions['move'] is not None:
+            game.move = decisions['move']
+            piece = game.move.startsq.piece
+            board.move(game.player, game.enemy, piece, game.move)
+            validMoves = None
+            game.moveMade = True
           
           # reset
           game.clearValidMoves()
-          validMoves = None
-          game.moveMade = True
+          
         
         # moved
         if game.moveMade == True:

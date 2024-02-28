@@ -11,31 +11,34 @@ class RamdomMove(Player):
                mode: Literal['Exit', 'Random']='Exit') -> None:
     super().__init__(color, pieceInit, name)
     self.isHuman = False
-    self.virusProb = 0.4
-    self.linkProb = 0.6
+    self.virusProb = 0.3
+    self.linkProb = 0.7
     self.mode = mode
     
   def reset(self):
     self.__init__(self.color, self.pieceInit, self.name, self.mode)
   
-  def returnMove(self, game: object, validMoves: list, allyPiece: list):
-    if self.mode == 'Exit': return self.findMoveToExit(game, validMoves, allyPiece)
-    elif self.mode == 'Random': return self.findRandomMove(validMoves)
-
-  def findRandomMove(self, validMoves):
-    return validMoves[random.randint(0, len(validMoves)-1)]
+  def setProb(self, virusProb, linkProb):
+    self.virusProb = virusProb
+    self.linkProb = linkProb
   
-  def findMoveToExit(self, game: object, validMoves: list, allyPiece: list):
-    # find a link can enter exit
-    for move in validMoves:
-      # there is a link can enter exit
-      if move.endsq.is_ally_exit(self.color) and move.pieceMoved.name == 'link': 
-        return move
+  def decision(self, game: object, validMoves: list, allyPiece: list):
+    decisions = {
+      'move': None,
+      'skill': None
+    }
+    # not used lb, random select a piece to install
+    if not self.skills['lb']['used']:
+      piece = self.randomPiece(allyPiece, self.virusProb, self.linkProb)
+      decisions['skill'] = ['lb', piece]
     
-    # get all ally piece that have valid moves
-    # allyPieces = [piece for piece in allyPieces if len(piece.moves) != 0]
-    allyPieces = [piece for piece in allyPiece if len(piece.moves) != 0]
+    # used lb, move
+    elif self.mode == 'Exit': decisions['move'] = self.findMoveToExit(game, validMoves, allyPiece)
+    elif self.mode == 'Random': decisions['move'] = self.findRandomMove(validMoves)
     
+    return decisions
+
+  def randomPiece(self, allyPieces, virusProb, linkProb):
     # # count no of link and virus
     v, l = 0, 0
     for i in range(len(allyPieces)):
@@ -46,15 +49,36 @@ class RamdomMove(Player):
     pieceProb = []
     for i in range(len(allyPieces)):
       # 40% chance to pick virus
-      if allyPieces[i].name == 'virus': pieceProb.append(self.virusProb/v)
+      if allyPieces[i].name == 'virus': pieceProb.append(virusProb/v)
       # 60% chance to pick link
-      elif allyPieces[i].name == 'link': pieceProb.append(self.linkProb/l)
+      elif allyPieces[i].name == 'link': pieceProb.append(linkProb/l)
     pieceProb = np.array(pieceProb)
     pieceProb /= pieceProb.sum()
     # print(game.turn, '|', game.player.name, '|', len(allyPieces), '|', len(pieceProb), pieceProb)
     
     # random choose a piece
     piece = np.random.choice(allyPieces, p=pieceProb)
+    
+    return piece
+  
+  def findRandomMove(self, validMoves):
+    return validMoves[random.randint(0, len(validMoves)-1)]
+  
+  def findMoveToExit(self, game: object, validMoves: list, allyPiece: list):
+    '''
+    Random select a piece and move it to exit
+    '''
+    # find a link can enter exit
+    for move in validMoves:
+      # there is a link can enter exit
+      if move.endsq.is_ally_exit(self.color) and move.pieceMoved.name == 'link': 
+        return move
+    
+    # get all ally piece that have valid moves
+    # allyPieces = [piece for piece in allyPieces if len(piece.moves) != 0]
+    allyPieces = [piece for piece in allyPiece if len(piece.moves) != 0]
+    
+    piece = self.randomPiece(allyPiece, self.virusProb, self.linkProb)
     
     # check dis to exit
     closestMove = piece.moves[0]
@@ -73,7 +97,6 @@ class RamdomMove(Player):
       if disToExit < closestDistance:
         closestMove = move
         closestDistance = disToExit
-      i
     
     return closestMove
     
