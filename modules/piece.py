@@ -1,5 +1,5 @@
 import os
-
+from .const import *
 class Piece:
   
   def __init__(self, name:str, color:str, value:float, lb=False, checked=False, texture=None, texture_rect=None) -> None:
@@ -29,14 +29,14 @@ class Piece:
 class Link(Piece):
   
   def __init__(self, color:str, lb=False, checked=False) -> None:
-    super().__init__('link', color, 1.0, lb, checked)
+    super().__init__('link', color, PIECEVALUE['link'], lb, checked)
     
 class Virus(Piece):
   
   def __init__(self, color:str, lb=False, checked=False) -> None:
-    super().__init__('virus', color, 1.0, lb, checked)
+    super().__init__('virus', color, PIECEVALUE['virus'], lb, checked)
     
 class Unknown(Piece):
   
   def __init__(self, color:str, lb=False, checked=False) -> None:
-    super().__init__('unknown', color, 0.5, lb, checked)
+    super().__init__('unknown', color, PIECEVALUE['unknown'], lb, checked)

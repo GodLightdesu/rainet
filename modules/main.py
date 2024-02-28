@@ -94,8 +94,13 @@ class Main:
               
               # check clicked in skills
               if game.whichSkill is None:  game.useSkill = False
-              else: game.useSkill = True
-              print('Used -> ', game.whichSkill)
+              else:
+                if game.whichSkill == 'lb': game.message = 'Select a ally piece to install LineBoost'
+                elif game.whichSkill == 'fw': game.message = 'Select a square to install FireWall'
+                elif game.whichSkill == 'vc': game.message = 'Select a enemy piece to check'
+                elif game.whichSkill == '404': game.message = 'Select 2 ally pieces to swap'
+                game.useSkill = True
+              # print('Used -> ', game.whichSkill)
             
             # use skill (which) when player choosed to use skill
             elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
