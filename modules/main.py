@@ -93,7 +93,7 @@ class Main:
               # check clicked in skills
               if game.whichSkill is None:  game.useSkill = False
               else: game.useSkill = True
-              # print(game.whichSkill)
+              print('Used -> ', game.whichSkill)
             
             # use skill (which) when player choosed to use skill
             elif board.onBoard(clicked_row, clicked_col) and game.useSkill == True and game.moveMade == False:
@@ -241,6 +241,9 @@ class Main:
           
           # change view of board when 'v' pressed
           if event.key == py.K_v:
+            if self.view == 'god' and not self.cheat:
+              self.view = game.nextView(VIEWS, self.view)
+              game.view = game.nextView(VIEWS, game.view)
             if self.cheat:
               self.view = game.nextView(VIEWS, self.view)
               game.view = game.nextView(VIEWS, game.view)

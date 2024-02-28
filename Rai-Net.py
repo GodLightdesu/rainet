@@ -7,13 +7,15 @@ if __name__ == '__main__':
   
   # 'vvllllvv'
   yellowInit = 'llvvvvll'
-  blueInit = 'vvllllvv'
+  blueInit = 'llvvvvll'
   
-  # random move AI
-  Yellow = RamdomMove('yellow', blueInit, name='Daruu', mode='Exit', virusProb=0.1)
+  # Human
+  # Yellow = Player('yellow', yellowInit, name='Kaito')
+  # Blue = Player('blue', blueInit, name='Kaito')
   
   # random choose a piece move to Exit
-  Blue = Player('blue', yellowInit, name='Kaito')
+  Yellow = RamdomMove('yellow', blueInit, name='Okabe', mode='Exit', virusProb=0.1)
+  Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.9)
   
-  main = Main(Yellow, Blue, view='blue', cheat=False)
+  main = Main(Yellow, Blue, view='god', cheat=False)
   main.Gback()
