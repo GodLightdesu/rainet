@@ -9,9 +9,9 @@ from .move import Move
 from .skill import Skill
 
 class Main:
-  def __init__(self, player1: object, player2: object,
+  def __init__(self, yellow: object, blue: object,
                view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
-    if player1 is None or player2 is None or player1.color == player2.color:
+    if yellow is None or blue is None or yellow.color == blue.color:
       raise ValueError('Invalid Player, please try again')
 
     py.init()
@@ -22,12 +22,12 @@ class Main:
     self.view = view
     self.cheat = cheat
     
-    self.game = Game(player1, player2, view)
+    self.game = Game(yellow, blue, view)
     
     # True if yellow is human, elif yellow is AI -> False
-    self.humanOne = player1.isHuman if player1.color == 'yellow' else player2.isHuman
+    self.humanOne = yellow.isHuman if yellow.color == 'yellow' else blue.isHuman
     # same as above but for blue
-    self.humanTwo = player2.isHuman if player2.color == 'blue' else player1.isHuman
+    self.humanTwo = blue.isHuman if blue.color == 'blue' else yellow.isHuman
     # print(self.humanOne, self.humanTwo)
     
     # only do this once, before the while loop

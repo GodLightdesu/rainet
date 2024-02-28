@@ -10,9 +10,9 @@ if __name__ == '__main__':
   blueInit = 'vvllllvv'
   
   # random move AI
-  player1 = RamdomMove('yellow', yellowInit, name='Okabe', mode='Random') 
+  Yellow = RamdomMove('yellow', blueInit, name='Daruu', mode='Exit')
   # random choose a piece move to Exit
-  player2 = RamdomMove('blue', blueInit, name='Daruu', mode='Exit')
+  Blue = Player('blue', yellowInit, name='Kaito')
   
-  main = Main(player1, player2, view='blue', cheat=True)
+  main = Main(Yellow, Blue, view='blue', cheat=False)
   main.Gback()

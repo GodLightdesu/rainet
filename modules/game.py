@@ -14,7 +14,7 @@ from .piece import *
 
 class Game:
   # init
-  def __init__(self, player1: object, player2: object,
+  def __init__(self, yellow: object, blue: object,
                view: Literal['god', 'yellow', 'blue']='god', cheat=False) -> None:
     
     self.board = Board()
@@ -32,8 +32,8 @@ class Game:
     self.animate = False
     self.view = view
     
-    self.Yellow = player1
-    self.Blue = player2
+    self.Yellow = yellow
+    self.Blue = blue
     self.players = [self.Yellow, self.Blue]
     self.player = self.players[(self.turn + 1) % 2]
     self.enemy = self.players[self.turn % 2]
@@ -51,8 +51,8 @@ class Game:
     self.undoSkill = False
     
     # piece init
-    self.initPiece(player1)
-    self.initPiece(player2)
+    self.initPiece(self.Yellow)
+    self.initPiece(self.Blue)
   
   def loadImages(self):
     IMAGES['BG'] = py.transform.scale(py.image.load("assets/images/BG.png"), (750, HEIGHT))
@@ -355,11 +355,11 @@ class Game:
         self.board.squares[row][col] = Square(row, col, Virus(color))
         i += 1  
   
-  def reset(self, player1: object, player2: object,
+  def reset(self, yellow: object, blue: object,
                view: Literal['god', 'yellow', 'blue']='god') -> None:
-    player1.reset()
-    player2.reset()
-    self.__init__(player1, player2, view)
+    yellow.reset()
+    blue.reset()
+    self.__init__(yellow, blue, view)
     
   def checkGameOver(self):
     yLink = self.Yellow.link_eat + self.Yellow.link_enter
