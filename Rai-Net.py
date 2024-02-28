@@ -1,18 +1,18 @@
 from modules.main import Main
 from modules.player import Player
-from modules.AI.Okabe import Okabe
+from modules.AI.randomAI import RamdomMove
 
 # run game
 if __name__ == '__main__':
   
   # 'vvllllvv'
-  yellowInit = 'vvllllvv'
-  blueInit = 'llvvvvll'
+  yellowInit = 'llvvvvll'
+  blueInit = 'vvllllvv'
   
-  # player1 = Player('yellow', yellowInit, name='Kaito')
-  # player2 = Player('blue', blueInit, name='Daru')
-  player1 = Okabe('yellow', yellowInit) # random move AI
-  player2 = Okabe('blue', blueInit) # random move AI
+  # random move AI
+  player1 = RamdomMove('yellow', yellowInit, name='Okabe', mode='Random') 
+  # random choose a piece move to Exit
+  player2 = RamdomMove('blue', blueInit, name='Daruu', mode='Exit')
   
-  main = Main(player1, player2, view='yellow', cheat=True)
+  main = Main(player1, player2, view='blue', cheat=True)
   main.Gback()

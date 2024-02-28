@@ -1,6 +1,7 @@
 import sys, os
 import pygame as py
 from typing import Literal
+from pygame.locals import *
 
 from .const import *
 from .game import Game
@@ -13,11 +14,15 @@ class Main:
     if player1 is None or player2 is None or player1.color == player2.color:
       raise ValueError('Invalid Player, please try again')
 
+    py.init()
+    self.screen = py.display.set_mode((750, 960), RESIZABLE)
+    py.display.set_caption('Rai-Net')
+    self.clock = py.time.Clock()
+    
     self.view = view
     self.cheat = cheat
     
     self.game = Game(player1, player2, view)
-    self.clock = self.game.clock
     
     # True if yellow is human, elif yellow is AI -> False
     self.humanOne = player1.isHuman if player1.color == 'yellow' else player2.isHuman
@@ -37,6 +42,7 @@ class Main:
     board = self.game.board
     clicker = self.game.clicker
     skill = self.game.skill
+    screen = self.screen
     
     # clear screen before game run
     os.system('clear')
@@ -221,6 +227,7 @@ class Main:
             board = self.game.board
             clicker = self.game.clicker
             skill = self.game.skill
+            screen = self.screen
           
           # change game mode (cheat / normal) when 'c' pressed
           if event.key == py.K_c:
@@ -267,20 +274,29 @@ class Main:
             print('-------------------------------------')
             
       # game logic
-      if not game.gameOver:
+      if game.gameOver == False:
         # AI decision
         if not humanTurn and not game.moveMade and not game.skillUsed:
-          validMoves = game.getValidMoves()
-          game.move = game.player.findRandomMove(validMoves)
-          piece = game.move.startsq.piece
+          game.animate = True
           
+          # collect information for AI decision
+          validMoves = game.getValidMoves()
+          allyPieces = game.board.getAllyPieces(game.player.color)
+          game.player.returnMove(game, validMoves, allyPieces)
+          
+          # move
+          game.move = game.player.returnMove(game, validMoves, allyPieces)
+          piece = game.move.startsq.piece
           board.move(game.player, game.enemy, piece, game.move)
+          
+          # reset
+          game.clearValidMoves()
           validMoves = None
           game.moveMade = True
         
         # moved
-        if game.moveMade:
-          if game.animate:  game.animateMove(game.move)
+        if game.moveMade == True:
+          if game.animate:  game.animateMove(screen, game.move)
           game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
           game.gamelog[game.turn] = game.move
@@ -292,11 +308,10 @@ class Main:
           game.skillLog[game.turn] = game.whichSkill
           game.gamelog[game.turn] = game.whichSkill
           game.nextPlayer()
-        
+
       # render game
-      # game.message = 'test'
-      game.DrawGameState()
-      game.drawText(game.message)
+      game.DrawGameState(screen)
+      game.drawText(screen, game.message)
       
       # check winner
       winner = game.checkGameOver()

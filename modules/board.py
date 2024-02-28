@@ -216,7 +216,8 @@ class Board:
           print('#', end=' ')
           continue
         if board[row][col].piece is not None:
-          print(board[row][col].piece.name[0], end=' ')
+          if board[row][col].piece.color == 'yellow': print(board[row][col].piece.name[0].upper(), end=' ')
+          else: print(board[row][col].piece.name[0], end=' ')
         else: print('-', end=' ')
       print('|')
     print('-------------------')
@@ -236,12 +237,25 @@ class Board:
       print('Blue view:')
       self.printboard(self.blueBoard, Yellow, Blue)
   
-  def getLBpiecePos(self, color):
+  def getLBpiecePos(self, color: str):
     for row in range(ROWS):
       for col in range(COLS):
         if (self.squares[row][col].piece is not None and 
             self.squares[row][col].piece.lb and 
             self.squares[row][col].piece.color == color):
+          return row, col
+  
+  def getAllyPieces(self, color: str):
+    pieces = []
+    for row in range(ROWS):
+      for col in range(COLS):
+        if (self.squares[row][col].has_ally_piece(color)): pieces.append(self.squares[row][col].piece)
+    return pieces
+  
+  def findPiecePos(self, piece: object):
+    for row in range(ROWS):
+      for col in range(COLS):
+        if (self.squares[row][col].piece is not None and self.squares[row][col].piece == piece):
           return row, col
   
   # private method (_methodName)

@@ -1,10 +1,6 @@
-
-from email import message
-
-
 class Player:
   
-  def __init__(self, color: str, pieceInit: str, name: str=None, isHuman=True) -> None:
+  def __init__(self, color: str, pieceInit: str, name: str=None) -> None:
     '''
     ID is sugggested to be less or equal to 7 characters
     
@@ -12,7 +8,7 @@ class Player:
       - please award capital letter is not allowed
     '''
     # self info
-    self.isHuman = isHuman
+    self.isHuman = True
     self.color = color
     self.name = name
     
@@ -39,7 +35,7 @@ class Player:
     self.serverStack = []
   
   def reset(self):
-    self.__init__(self.color, self.pieceInit, self.name, self.isHuman)
+    self.__init__(self.color, self.pieceInit, self.name)
   
   def checkPieceInit(self, pieceInit: str):
     v, l = 0, 0

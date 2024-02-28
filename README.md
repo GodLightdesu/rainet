@@ -6,6 +6,11 @@ Used for studying and developed based on pygame
 
 Learning python for interest, hope I can add a AI engine in the future
 
+### AI
+
+* `RandomMove`
+  <!-- *  -->
+
 ## File structure
 
 ```bash
@@ -48,13 +53,15 @@ start by simpely running `Rai-Net.py`
 if __name__ == '__main__':
   
   # 'vvllllvv'
-  yellowInit = 'vvllvvll'
-  blueInit = 'vvllvvll'
+  yellowInit = 'llvvvvll'
+  blueInit = 'vvllllvv'
   
-  player1 = Player('yellow', yellowInit, name='Kaito')
-  player2 = Okabe('blue', blueInit) # random move AI
+  # random move AI
+  player1 = RamdomMove('yellow', yellowInit, name='Okabe', mode='Random') 
+  # random choose a piece move to Exit
+  player2 = RamdomMove('blue', blueInit, name='Daruu', mode='Exit')
   
-  main = Main(player1, player2, view='yellow', cheat=False)
+  main = Main(player1, player2, view='blue', cheat=True)
   main.Gback()
 ```
 
@@ -90,7 +97,7 @@ if __name__ == '__main__':
   * [✓] virus check
   * [✓] 404
 * [ ] add a AI
-  * [✓] Okane (random move only)
+  * [✓] random move / random choose a piece move to exit (there is some bugs, see description)
   * Daru
   * Christina
   * Faris
