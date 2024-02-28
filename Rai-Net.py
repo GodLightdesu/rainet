@@ -10,8 +10,7 @@ if __name__ == '__main__':
   blueInit = 'vvllllvv'
   
   # random move AI
-  Yellow = RamdomMove('yellow', blueInit, name='Daruu', mode='Exit')
-  Yellow.setProb(0.1, 0.9)
+  Yellow = RamdomMove('yellow', blueInit, name='Daruu', mode='Exit', virusProb=0.1)
   
   # random choose a piece move to Exit
   Blue = Player('blue', yellowInit, name='Kaito')

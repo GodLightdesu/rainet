@@ -8,18 +8,25 @@ from ..const import *
 
 class RamdomMove(Player):
   def __init__(self, color: str, pieceInit: str, name='Random', 
-               mode: Literal['Exit', 'Random']='Exit') -> None:
+               mode: Literal['Exit', 'Random']='Exit', virusProb=0.3) -> None:
+    if virusProb == 1: raise ValueError('virusProb must not equal to 1')
+    elif virusProb == 0: raise ValueError('virusProb must not equal to 0')
+    
     super().__init__(color, pieceInit, name)
     self.isHuman = False
-    self.virusProb = 0.3
-    self.linkProb = 0.7
+    self.virusProb = virusProb
+    self.linkProb = 1 - virusProb
     self.mode = mode
     
   def reset(self):
-    self.__init__(self.color, self.pieceInit, self.name, self.mode)
-  
-  def setProb(self, virusProb, linkProb):
+    self.__init__(self.color, self.pieceInit, self.name, self.mode, virusProb=self.virusProb)
+    
+  def setVirusProb(self, virusProb):
     self.virusProb = virusProb
+    self.linkProb = 1 - virusProb
+  
+  def setLinkProb(self, linkProb):
+    self.virusProb = 1 - linkProb
     self.linkProb = linkProb
   
   def decision(self, game: object, validMoves: list, allyPiece: list):
