@@ -106,7 +106,7 @@ class RamdomMove(Player):
         closestDistance = disToExit
     
     return closestMove
-    
+  
   def distanceToExit(self, game, startRow, startCol):
     Exit1, Exit2 = EXITPOS[self.color]
     row0, col0 = Exit1  # col 3
@@ -123,32 +123,3 @@ class RamdomMove(Player):
       dC = col1 - startCol
     
     return int(math.sqrt(dR**2 + dC**2))
-
-  def scoreMaterial(self, game):
-    if game.view == 'god' or game.view == 'yellow': board = game.board.squares
-    elif game.view == 'blue': board = game.board.blueBoard
-    enemy = game.Yellow if self.color != 'yellow' else game.Blue
-    enemy_Link_eat = enemy.link_eat
-    enemy_Virus_eat = enemy.virus_eat
-    
-    score = 0
-    
-    score -= enemy_Link_eat * PIECEVALUE['link'] 
-    score += enemy_Virus_eat * PIECEVALUE['virus']
-    
-    for row in range(ROWS):
-      for col in range(COLS):
-        piece = board[row][col].piece
-        if piece is not None: 
-          # # ally piece
-          # if piece.color == self.color: score += PIECEVALUE[piece.name]
-          
-          # # enemy piece but checked
-          # elif piece.color != self.color and piece.checked:
-          #   score -= PIECEVALUE[piece.name]
-          
-          # # enemy piece and not checked
-          # elif piece.color != self.color and not piece.checked: 
-          #   score -= PIECEVALUE['unknown']
-          pass
-    return score

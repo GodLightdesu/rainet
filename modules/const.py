@@ -70,7 +70,10 @@ BCOL = COL
 BCOL.reverse()
 
 PIECEVALUE = {
-  'link' : Decimal(1.5),
-  'virus' : Decimal(0.5),
-  'unknown' : Decimal(1.0)
+  # 'link' : Decimal(2.0),
+  # 'virus' : Decimal(1.0),
+  # 'unknown' : Decimal(1.5)
+  'link' : 2.0,
+  'virus' : 1.0,
+  'unknown' : 1.5
 }

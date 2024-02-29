@@ -385,6 +385,7 @@ class Game:
   def updateInfo(self):
     self.animate = False
     
+    self.move = None
     self.moveMade = False
 
     self.whichSkill = None
@@ -395,11 +396,8 @@ class Game:
   def nextPlayer(self):
     self.turn += 1
     self.switchPlayer()
-    # print('switch to', self.player.name)
-    
     self.updateInfo()
-    
-    # print(self.gamelog)
+    # print(self.turn, self.player.name)
   
   def revert(self):
     self.turn -= 1

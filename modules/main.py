@@ -30,7 +30,6 @@ class Main:
     self.humanOne = yellow.isHuman if yellow.color == 'yellow' else blue.isHuman
     # same as above but for blue
     self.humanTwo = blue.isHuman if blue.color == 'blue' else yellow.isHuman
-    # print(self.humanOne, self.humanTwo)
     
     # only do this once, before the while loop
     self.game.loadImages()
@@ -95,6 +94,7 @@ class Main:
               # check clicked in skills
               if game.whichSkill is None:  game.useSkill = False
               else:
+                # Show description when click skills
                 if game.whichSkill == 'lb': game.message = 'Select a ally piece to install LineBoost'
                 elif game.whichSkill == 'fw': game.message = 'Select a square to install FireWall'
                 elif game.whichSkill == 'vc': game.message = 'Select a enemy piece to check'
@@ -236,6 +236,8 @@ class Main:
             clicker = self.game.clicker
             skill = self.game.skill
             screen = self.screen
+            humanTurn = (self.humanOne and game.yellowToMove()) or (self.humanTwo and not game.yellowToMove())
+            os.system('clear')
           
           # change game mode (cheat / normal) when 'c' pressed
           if event.key == py.K_c:
@@ -284,7 +286,7 @@ class Main:
             print('-------------------------------------')
             
       # game logic
-      if game.gameOver == False:
+      if not game.gameOver:
         # AI decision
         if not humanTurn and not game.moveMade and not game.skillUsed:
           game.animate = True
@@ -292,12 +294,10 @@ class Main:
           # collect information for AI decision
           validMoves = game.getValidMoves()
           allyPieces = game.board.getAllyPieces(game.player.color)
-          score = game.player.scoreMaterial(game)
-          
-          print(score)
-          
+
           # make decision
           decisions = game.player.decision(game, validMoves, allyPieces)
+          
           # skill
           if decisions['skill'] is not None:
             game.whichSkill = decisions['skill'][0]
@@ -308,7 +308,7 @@ class Main:
           # move
           elif decisions['move'] is not None:
             game.move = decisions['move']
-            piece = game.move.startsq.piece
+            piece = game.move.pieceMoved
             board.move(game.player, game.enemy, piece, game.move)
             validMoves = None
             game.moveMade = True
@@ -318,7 +318,7 @@ class Main:
           
         
         # moved
-        if game.moveMade == True:
+        if game.moveMade:
           if game.animate:  game.animateMove(screen, game.move)
           game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
           game.movelog[game.turn] = game.move
