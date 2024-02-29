@@ -208,6 +208,9 @@ class Skill:
     else: # valid target
       used = skills[which]()
       if used: 
+        game.message = f'{game.player.name} Used: {which}'
         player.skillLog.append(which)
-        # print(player.skills[which]['log'])
+        game.skillLog[game.turn] = which
+        game.gamelog[game.turn] = which
+        game.nextPlayer()
       return used

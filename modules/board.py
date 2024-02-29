@@ -69,10 +69,12 @@ class Board:
     piece.add_move(move)
   
   # move method
-  def move(self, player: object, enemy: object, piece: object, move: object):
+  def move(self, game: object, piece: object, move: object):
+    player = game.player
+    enemy = game.enemy
+    
     startsq = move.startsq
     endsq = move.endsq
-    
     # startPiece = self.squares[startsq.row][startsq.col].piece
     endPiece = self.squares[endsq.row][endsq.col].piece
     
@@ -86,11 +88,16 @@ class Board:
     # console board move update
     self.squares[startsq.row][startsq.col].piece = None
     
-    if not self.isEnterServer(player, endsq):  self.squares[endsq.row][endsq.col].piece = piece
+    if not self.isEnterServer(player, endsq): self.squares[endsq.row][endsq.col].piece = piece
     else: self.squares[endsq.row][endsq.col].piece = None
     
     # clear valid moves
-    piece.clear_moves()
+    game.clearValidMoves()
+    
+    game.message = f'{game.player.name} Moved: {move.getNotation()}'
+    game.movelog[game.turn] = move
+    game.gamelog[game.turn] = move
+    game.nextPlayer()
 
   def undoMove(self, game: object):
     if len(game.movelog) != 0:
@@ -108,6 +115,11 @@ class Board:
         self.leaveServer(game.player, game.enemy)
       elif endSq.has_enemy_piece(game.player.color):
         self.unCapturePiece(game.player, game.enemy, endSq.piece)
+      
+      # game.clearValidMoves()
+      game.message = game.player.name + ' Undo move'
+      # print(game.message)
+      game.gameOver = False
   
   def validMove(self, piece: object, move: object):
     return move in piece.moves

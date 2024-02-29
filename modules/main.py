@@ -6,7 +6,6 @@ from pygame.locals import *
 from .const import *
 from .game import Game
 from .move import Move
-from .skill import Skill
 
 class Main:
   def __init__(self, yellow: object, blue: object,
@@ -95,8 +94,8 @@ class Main:
               if game.whichSkill is None:  game.useSkill = False
               else:
                 # Show description when click skills
-                if game.whichSkill == 'lb': game.message = 'Select a ally piece to install LineBoost'
-                elif game.whichSkill == 'fw': game.message = 'Select a square to install FireWall'
+                if game.whichSkill == 'lb': game.message = 'Select a ally piece to use LineBoost'
+                elif game.whichSkill == 'fw': game.message = 'Select a square to use FireWall'
                 elif game.whichSkill == 'vc': game.message = 'Select a enemy piece to check'
                 elif game.whichSkill == '404': game.message = 'Select 2 ally pieces to swap'
                 game.useSkill = True
@@ -193,9 +192,9 @@ class Main:
                 game.move = Move(startsq, endsq)
                 if board.validMove(clicker.piece, game.move):
                   
-                  board.move(game.player, game.enemy, clicker.piece, game.move)
-                  game.moveMade = True
+                  board.move(game, clicker.piece, game.move)
                   game.animate = True
+                  game.moveMade = True
                 # else: print('Invalid move')
                 
                 # not display the valid moves of selected piece
@@ -225,7 +224,6 @@ class Main:
               game.undo()
               game.undo()
             else: game.undo()
-            game.clearValidMoves()
             game.animate = False
        
           # reset the game when 'r' pressed
@@ -290,47 +288,61 @@ class Main:
         # AI decision
         if not humanTurn and not game.moveMade and not game.skillUsed:
           game.animate = True
-          
-          # collect information for AI decision
-          validMoves = game.getValidMoves()
-          allyPieces = game.board.getAllyPieces(game.player.color)
 
-          # make decision
-          decisions = game.player.decision(game, validMoves, allyPieces)
+          game.player.Search(game, 2)
+          if game.player.bestMove is None:
+            validMoves = game.getValidMoves()
+            game.move = game.player.findRandomMove(validMoves)
+            game.clearValidMoves()
+          else:
+            print('bestMove:', game.player.bestMove.moveID)
+            game.move = game.player.bestMove
           
-          # skill
-          if decisions['skill'] is not None:
-            game.whichSkill = decisions['skill'][0]
-            piece = decisions['skill'][1]
-            target0 = game.board.findPiecePos(piece)
-            game.skillUsed = skill.use(game, game.whichSkill, target0)
+          piece = game.move.pieceMoved
+          board.move(game, piece, game.move)
+          game.moveMade = True
           
-          # move
-          elif decisions['move'] is not None:
-            game.move = decisions['move']
-            piece = game.move.pieceMoved
-            board.move(game.player, game.enemy, piece, game.move)
-            validMoves = None
-            game.moveMade = True
+          # # collect information for AI decision
+          # validMoves = game.getValidMoves()
+          # allyPieces = game.board.getAllyPieces(game.player.color)
+
+          # # make decision
+          # decisions = game.player.decision(game, validMoves, allyPieces)
           
-          # reset
-          game.clearValidMoves()
+          # # skill
+          # if decisions['skill'] is not None:
+          #   game.whichSkill = decisions['skill'][0]
+          #   piece = decisions['skill'][1]
+          #   target0 = game.board.findPiecePos(piece)
+          #   game.skillUsed = skill.use(game, game.whichSkill, target0)
+          
+          # # move
+          # elif decisions['move'] is not None:
+          #   game.move = decisions['move']
+          #   piece = game.move.pieceMoved
+          #   board.move(game.player, game.enemy, piece, game.move)
+          #   validMoves = None
+          #   game.moveMade = True
+          
+          # # reset
+          # game.clearValidMoves()
           
         
         # moved
         if game.moveMade:
           if game.animate:  game.animateMove(screen, game.move)
-          game.message = f'{game.player.name} Moved: {game.move.getNotation()}'
-          game.movelog[game.turn] = game.move
-          game.gamelog[game.turn] = game.move
-          game.nextPlayer()
+          # print(game.enemy.name, game.Blue.scoreBoard(game))
+          
+          game.move = None
+          game.animate = False
+          game.moveMade = False
         
         # used skill
         elif game.skillUsed:
-          game.message = f'{game.player.name} Used: {game.whichSkill}'
-          game.skillLog[game.turn] = game.whichSkill
-          game.gamelog[game.turn] = game.whichSkill
-          game.nextPlayer()
+          game.whichSkill = None
+          game.useSkill = False
+          game.undoSkill = False
+          game.skillUsed = False
 
       # render game
       game.DrawGameState(screen)

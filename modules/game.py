@@ -4,7 +4,6 @@ import os
 from typing import Literal
 
 from modules.skill import Skill
-from .player import Player
 from .board import Board
 from .clicker import Clicker
 
@@ -380,32 +379,17 @@ class Game:
   
   def switchPlayer(self):
     self.player = self.players[(self.turn + 1) % 2]
-    self.enemy = self.players[self.turn % 2]
-  
-  def updateInfo(self):
-    self.animate = False
-    
-    self.move = None
-    self.moveMade = False
-
-    self.whichSkill = None
-    self.useSkill = False
-    self.skillUsed = False
-    self.undoSkill = False
+    self.enemy = self.players[self.turn % 2]    
    
   def nextPlayer(self):
     self.turn += 1
     self.switchPlayer()
-    self.updateInfo()
     # print(self.turn, self.player.name)
   
   def revert(self):
     self.turn -= 1
     self.switchPlayer()
-    # print('revert to', self.player.name)
-    
-    self.updateInfo()
-    
+    # print('revert to', self.player.name)    
     # print(self.gamelog)
   
   def undo(self):
@@ -420,8 +404,6 @@ class Game:
       # undo move
       elif last_value not in SKILLS:
         self.board.undoMove(self)
-        self.message = self.player.name + ' Undo move'
-        self.gameOver = False
   
   def nextView(self, lst: list, element: str):
    idx = lst.index(element)
