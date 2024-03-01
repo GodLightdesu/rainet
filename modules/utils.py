@@ -1,4 +1,5 @@
 import math
+import random
 from .const import *
 
 def Distance(game, startRow, startCol, targetRow, targetCol):
@@ -61,36 +62,36 @@ def scoreMaterial(game):
     elif game.enemy.link_eat == 4: return -WINNINGSCORE
     
     # pieces on board
-    # for piece in allyPieces:
-    #   if piece.name == 'link': allyLink += 1
-    #   elif piece.name == 'virus': allyVirus += 1
-    # score += allyLink * PIECEVALUE['link']
-    # score += allyVirus * PIECEVALUE['virus']
+    for piece in allyPieces:
+      if piece.name == 'link': allyLink += 1
+      elif piece.name == 'virus': allyVirus += 1
+    score += allyLink * PIECEVALUE['link']
+    score += allyVirus * PIECEVALUE['virus']
     
-    # for piece in enemyPieces:
-    #   if piece.checked: score -= PIECEVALUE[piece.name]
-    #   else: score -= PIECEVALUE['unknown']
+    for piece in enemyPieces:
+      if piece.checked: score -= PIECEVALUE[piece.name]
+      else: score -= PIECEVALUE['unknown']
     
     # pieces ate
-    score -= PIECEVALUE['link'] * game.enemy.link_eat * 10
-    score += PIECEVALUE['virus'] * game.enemy.virus_eat * 5
+    score -= PIECEVALUE['link'] * game.enemy.link_eat
+    score += PIECEVALUE['virus'] * game.enemy.virus_eat
     
-    score += PIECEVALUE['unknown'] * 10 * (game.player.link_eat + game.player.virus_eat)
+    # score += PIECEVALUE['unknown'] * 10 * (game.player.link_eat + game.player.virus_eat)
     
     # pieces in server
     # print(game.enemy.name + ' serverStack:', end=' ')
     for piece in game.enemy.serverStack:
       # print(piece.name, end=' ')
-      if piece.name == 'link': score += PIECEVALUE['link'] * 10
-      elif piece.name == 'virus': score -= PIECEVALUE['virus'] * 20
+      if piece.name == 'link': score += PIECEVALUE['link']
+      elif piece.name == 'virus': score -= PIECEVALUE['virus'] * 2
     # print()
     
     # print(game.player.name + ' serverStack:', end=' ')
     for piece in game.player.serverStack:
       # print(piece.name, end=' ')
-      if piece.checked and piece.name == 'virus': score += PIECEVALUE['virus'] * 20
+      if piece.checked and piece.name == 'virus': score += PIECEVALUE['virus'] * 2
       # assume enemy will enter link
-      else: score -= PIECEVALUE['link'] * 2
+      else: score -= PIECEVALUE['link']
     # print()
     
     # bouns of link's dis to exit
@@ -99,13 +100,18 @@ def scoreMaterial(game):
         startRow, startCol = game.board.findPiecePos(piece)
         if game.view == 'blue': startRow = BROW[startRow]
         dis = distanceToExit(game, game.player.color, startRow, startCol)
-        score += (10 - dis) * 5
+        score += (10 - dis)
     
+    
+    i = 0
+    random.shuffle(enemyPieces)
     for piece in enemyPieces:
+      if i == 4: break
       startRow, startCol = game.board.findPiecePos(piece)
       if game.view == 'blue': startRow = BROW[startRow]
       dis = distanceToExit(game, game.enemy.color, startRow, startCol)
-      score -= (10 - dis) * 5
+      score -= (10 - dis)
+      i += 1
     
     # bouns of virus's dis to enemy pieces
     for piece in allyPieces:

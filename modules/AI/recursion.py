@@ -1,4 +1,5 @@
 import random
+import timeit
 import numpy as np
 
 # from typing import Literal
@@ -53,11 +54,14 @@ class Recursion(Player):
     return decisions
   
   def findBestMove(self, game):
-    self.counter = 0 
+    self.counter = 0
+    start = timeit.default_timer()
     # score = self.Search(game, self.DEPTH)
-    score = self.SearchAlphaBeta(game, self.DEPTH, alpha=-WINNINGSCORE, beta=WINNINGSCORE)
+    score = self.SearchAlphaBeta(game, self.DEPTH, alpha=float('-inf'), beta=float('inf'))
+    stop = timeit.default_timer()
     print('-------------------------------------')
     print('Depth:', self.DEPTH)
+    print(f'Runtime: {round(stop-start, 4)} s')
     print('Evaluated:', self.counter, 'moves')
     print('bestMove:', self.bestMove.moveID)
     print(self.name + '\'s score :', score)
@@ -81,12 +85,15 @@ class Recursion(Player):
       game.clearValidMoves()
       # search next game state
       score = -self.Search(game, depth - 1)
+      # undo move
+      game.board.undoMove(game)
+      
       if score > maxScore:
         maxScore = score
         if depth == self.DEPTH:
           self.bestMove = move
           print(game.player.name + ':', move.moveID, score)
-      game.board.undoMove(game)
+      
     
     game.clearValidMoves()
     return maxScore
@@ -94,7 +101,6 @@ class Recursion(Player):
   def SearchAlphaBeta(self, game, depth: int, alpha: int, beta: int):
     self.counter += 1
     if depth == 0: return scoreBoard(game)
-    maxScore = -WINNINGSCORE
     
     validMoves = game.getValidMoves()
     random.shuffle(validMoves)
@@ -105,18 +111,19 @@ class Recursion(Player):
       game.clearValidMoves()
       # search next game state
       score = -self.SearchAlphaBeta(game, depth - 1, -beta, -alpha)
-      if score > maxScore:
-        maxScore = score
+      # undo move
+      game.board.undoMove(game)
+      game.clearValidMoves()
+      # check best move
+      if score >= beta:
         if depth == self.DEPTH:
           self.bestMove = move
           print(game.player.name + ':', move.moveID, score)
-      game.board.undoMove(game)
-      
-      # pruning
-      if maxScore > alpha:
-        alpha = maxScore
-      if alpha >= beta:
-        break
-      
-    game.clearValidMoves()
-    return maxScore
+        return beta
+      # find a new best move
+      if score > alpha:
+        alpha = score
+        if depth == self.DEPTH:
+          self.bestMove = move
+          print(game.player.name + ':', move.moveID, score)
+    return alpha

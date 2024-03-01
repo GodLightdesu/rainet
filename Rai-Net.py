@@ -1,14 +1,14 @@
+import random
 from modules.main import Main
+from modules.AI.BattleArray import *
 from modules.player import Player
 from modules.AI.randomAI import RamdomMove
 from modules.AI.recursion import Recursion
 
 # run game
 if __name__ == '__main__':
-  
-  # 'vvllllvv'
-  yellowInit = 'llvvvvll'
-  blueInit = 'llvvvvll'
+  yellowInit = battleArraies[random.randint(0, len(battleArraies)-1)]
+  blueInit = battleArraies[random.randint(0, len(battleArraies)-1)]
   
   # Human
   Yellow = Player('yellow', yellowInit, name='Okabe')
