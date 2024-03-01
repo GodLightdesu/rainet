@@ -11,7 +11,7 @@ if __name__ == '__main__':
   blueInit = battleArraies[random.randint(0, len(battleArraies)-1)]
   
   # Human
-  Yellow = Player('yellow', yellowInit, name='Okabe')
+  # Yellow = Player('yellow', yellowInit, name='Okabe')
   # Blue = Player('blue', blueInit, name='Daru')
   
   # random choose a piece move to Exit
@@ -19,7 +19,7 @@ if __name__ == '__main__':
   # Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.4)
   
   # test 
-  # Yellow = Recursion('yellow', yellowInit, name='Okabe', depth=4)
+  Yellow = Recursion('yellow', yellowInit, name='Okabe', depth=4)
   Blue = Recursion('blue', blueInit, name='Daru', depth=4)
   
   main = Main (Yellow, Blue, view='yellow', cheat=False)

@@ -43,14 +43,68 @@ class Recursion(Player):
     
     return piece
   
+  def randomEnePiece(self, enemyPieces: list) -> object:
+    Prob = 1 / len(enemyPieces)
+    pieceProb = [Prob for i in range(len(enemyPieces))]
+    piece = np.random.choice(enemyPieces, p=pieceProb)
+    return piece
+  
   def findRandomMove(self, validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
   
-  def decision(self, game: object, validMoves: list, allyPiece: list):
+  def decision(self, game: object):
+    # collect information for AI decision
+    allyPieces = game.board.getAllyPieces(game.player.color)
+    enemyPieces =  game.board.getAllyPieces(game.enemy.color)
+    
+    # make decision
     decisions = {
       'move': None,
       'skill': None
     }
+    actions = ['lb', 'fw', 'vc', '404', 'move']
+    lbProb = 0.75 if not self.skills['lb']['used'] else 0.00
+    fwProb = 0.0
+    vcProb = 0.1
+    # 404
+    checkedPiece = None
+    swap = np.random.choice([True, False], p=[0.5, 0.5])
+    for piece in allyPieces:
+      if piece.checked: 
+        checkedPiece = piece
+        _404Prob = 0.1
+      else: _404Prob = 0.0
+    # move
+    moveProb = 1 - lbProb - fwProb - vcProb - _404Prob
+    actionProb = [lbProb, fwProb, vcProb, _404Prob, moveProb]
+    actions = np.random.choice(actions, p=actionProb)
+
+    
+    if actions == 'lb': # lb
+      piece = self.randomPiece(allyPieces, 0.7)
+      decisions['skill'] = ['lb', piece]
+   
+    elif actions == 'vc':  # vc
+      piece = self.randomEnePiece(enemyPieces)
+      decisions['skill'] = ['vc', piece]
+    
+    elif actions == '404' and checkedPiece is not None:  # 404
+      swapPiece = self.randomEnePiece([piece for piece in allyPieces if piece != checkedPiece])
+      decisions['skill'] = ['404', checkedPiece, swapPiece, swap]
+    
+    else: # move
+      game.player.findBestMove(game)
+      validMoves = game.getValidMoves()
+      if self.bestMove is None: decisions['move'] = self.findRandomMove(validMoves)
+      else: decisions['move'] = self.bestMove
+      # check if there is a link can enter exit
+      for move in validMoves:
+        # there is a link can enter exit
+        if move.endsq.is_ally_exit(self.color) and move.pieceMoved.name == 'link' and len(allyPieces) != 0: 
+          decisions['move'] =  move
+      game.clearValidMoves()
+      game.player.bestMove = None
+    
     return decisions
   
   def findBestMove(self, game):
@@ -93,8 +147,6 @@ class Recursion(Player):
         if depth == self.DEPTH:
           self.bestMove = move
           print(game.player.name + ':', move.moveID, score)
-      
-    
     game.clearValidMoves()
     return maxScore
   

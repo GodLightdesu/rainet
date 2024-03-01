@@ -292,65 +292,39 @@ class Main:
         # AI decision
         if not humanTurn and not game.moveMade and not game.skillUsed:
           game.animate = True
-          # collect information for AI decision
-          allyPieces = game.board.getAllyPieces(game.player.color)
           
-          # use lb first
-          if not game.player.skills['lb']['used']:
-            game.whichSkill = 'lb'
-            piece = game.player.randomPiece(allyPieces, 0.7)
+          # make decision
+          decisions = game.player.decision(game)
+                    
+          # skill
+          if decisions['skill'] is not None and decisions['skill'][0] == '404':
+            game.whichSkill = decisions['skill'][0]
+            piece0 = decisions['skill'][1]
+            piece1 = decisions['skill'][2]
+            target0 = game.board.findPiecePos(piece0)
+            target1 = game.board.findPiecePos(piece1)
+            game.skillUsed = skill.use(game, '404', target0, target1)
+            game.whichSkill = None
+          elif decisions['skill'] is not None and decisions['skill'][0] != '404':
+            game.whichSkill = decisions['skill'][0]
+            piece = decisions['skill'][1]
             target0 = game.board.findPiecePos(piece)
             game.skillUsed = skill.use(game, game.whichSkill, target0)
-          
+            game.whichSkill = None
           # move
           else:
-            score = game.player.findBestMove(game)
-            
-            if game.player.bestMove is None:
-              validMoves = game.getValidMoves()
-              game.move = game.player.findRandomMove(validMoves)
-              print('Random move:', game.move.moveID)
-              game.clearValidMoves()
-            
-            else:
-              game.move = game.player.bestMove
-              game.clearValidMoves()
-            
-            game.player.bestMove = None
+            game.move = decisions['move']
             piece = game.move.pieceMoved
             board.move(game, piece, game.move)
-
             game.moveMade = True
-          
-          
-
-          # # make decision
-          # decisions = game.player.decision(game, validMoves, allyPieces)
-          
-          # # skill
-          # if decisions['skill'] is not None:
-          #   game.whichSkill = decisions['skill'][0]
-          #   piece = decisions['skill'][1]
-          #   target0 = game.board.findPiecePos(piece)
-          #   game.skillUsed = skill.use(game, game.whichSkill, target0)
-          
-          # # move
-          # elif decisions['move'] is not None:
-          #   game.move = decisions['move']
-          #   piece = game.move.pieceMoved
-          #   board.move(game.player, game.enemy, piece, game.move)
-          #   validMoves = None
-          #   game.moveMade = True
-          
-          # # reset
-          # game.clearValidMoves()
-          
         
         # moved
         if game.moveMade:
           if game.animate:  game.animateMove(screen, game.move)
-          scoreBoard(game)
-          
+          score = scoreBoard(game)
+          # print('-------------------------------------')
+          # print(game.player.name+'\'s score:', score)
+          # print('-------------------------------------')
           game.move = None
           game.animate = False
           game.moveMade = False

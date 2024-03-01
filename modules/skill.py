@@ -208,7 +208,8 @@ class Skill:
     else: # valid target
       used = skills[which]()
       if used: 
-        game.message = f'{game.player.name} Used: {which}'
+        if which != '404': game.message = f'{game.player.name} Used: {which} in {target0}'
+        else: game.message = f'{game.player.name} Used: {which} in {target0} and {target1}'
         player.skillLog.append(which)
         game.skillLog[game.turn] = which
         game.gamelog[game.turn] = which
