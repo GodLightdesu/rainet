@@ -4,6 +4,7 @@ from typing import Literal
 from pygame.locals import *
 
 from .const import *
+from .utils import *
 from .game import Game
 from .move import Move
 
@@ -74,7 +75,7 @@ class Main:
 
             # cancel use skill only when player choosed to use skill but not used
             if clicked_col > 7 and game.useSkill == True and game.skillUsed == False:
-              print('cancel use skill')
+              game.message = game.player.name + ' cancel to use ' + game.whichSkill
               game.whichSkill = None
               game.useSkill = False
             
@@ -119,10 +120,11 @@ class Main:
                   if targetSq0.has_ally_piece(game.player.color) and targetSq1.has_ally_piece(game.player.color):
                     game.displayOption = True
                   else: 
+                    game.message = 'cancel to use 404'
                     game.whichSkill = None
                     game.useSkill = False
               
-                # use skill
+                # use 404
                 elif len(clicker.playerClicks) == 3:
                   target0 = clicker.playerClicks[0]
                   target1 = clicker.playerClicks[1]
@@ -132,7 +134,7 @@ class Main:
                   if row == 5 and col == 3: skill.swap = True
                   elif row == 5 and col == 4: skill.swap = False
                   else:
-                    print('cancel use skill')
+                    game.message = 'cancel to use 404'
                     game.displayOption = False
                     game.whichSkill = None
                     game.useSkill = False
@@ -146,6 +148,7 @@ class Main:
                   # not valid target
                   if not game.skillUsed:
                     # clicker.claerPlayerClicks()
+                    game.message = 'cancel to use ' + game.whichSkill
                     game.whichSkill = None
                     game.useSkill = False
                     
@@ -158,6 +161,7 @@ class Main:
                 # not valid target
                 if not game.skillUsed:
                   clicker.claerPlayerClicks()
+                  game.message = 'cancel to use ' + game.whichSkill
                   game.displayOption = False
                   game.whichSkill = None
                   game.useSkill = False
@@ -288,23 +292,39 @@ class Main:
         # AI decision
         if not humanTurn and not game.moveMade and not game.skillUsed:
           game.animate = True
-
-          game.player.Search(game, 2)
-          if game.player.bestMove is None:
-            validMoves = game.getValidMoves()
-            game.move = game.player.findRandomMove(validMoves)
-            game.clearValidMoves()
+          # collect information for AI decision
+          allyPieces = game.board.getAllyPieces(game.player.color)
+          
+          # use lb first
+          if not game.player.skills['lb']['used']:
+            game.whichSkill = 'lb'
+            piece = game.player.randomPiece(allyPieces, 0.7)
+            target0 = game.board.findPiecePos(piece)
+            game.skillUsed = skill.use(game, game.whichSkill, target0)
+          
+          # move
           else:
-            print('bestMove:', game.player.bestMove.moveID)
-            game.move = game.player.bestMove
+            score = game.player.findBestMove(game)
+            print(game.player.name + '\'s score :', score)
+            
+            if game.player.bestMove is None:
+              validMoves = game.getValidMoves()
+              game.move = game.player.findRandomMove(validMoves)
+              print('Random move:', game.move.moveID)
+              game.clearValidMoves()
+            
+            else:
+              print('bestMove:', game.player.bestMove.moveID)
+              game.move = game.player.bestMove
+              game.clearValidMoves()
+            
+            game.player.bestMove = None
+            piece = game.move.pieceMoved
+            board.move(game, piece, game.move)
+
+            game.moveMade = True
           
-          piece = game.move.pieceMoved
-          board.move(game, piece, game.move)
-          game.moveMade = True
           
-          # # collect information for AI decision
-          # validMoves = game.getValidMoves()
-          # allyPieces = game.board.getAllyPieces(game.player.color)
 
           # # make decision
           # decisions = game.player.decision(game, validMoves, allyPieces)
@@ -331,7 +351,7 @@ class Main:
         # moved
         if game.moveMade:
           if game.animate:  game.animateMove(screen, game.move)
-          # print(game.enemy.name, game.Blue.scoreBoard(game))
+          scoreBoard(game)
           
           game.move = None
           game.animate = False

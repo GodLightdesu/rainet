@@ -1,21 +1,45 @@
 import random
-import math
 import numpy as np
 
-from typing import Literal
+# from typing import Literal
 from ..player import Player
 from ..const import *
+from ..utils import *
 
 class Recursion(Player):
   
-  def __init__(self, color: str, pieceInit: str, name='Null', depth: int=2) -> None:
+  def __init__(self, color: str, pieceInit: str, name='Null', depth: int=7) -> None:
     super().__init__(color, pieceInit, name)
     self.isHuman = False
-    self.depth = depth
+    self.DEPTH = depth
     self.bestMove = None
     
   def reset(self):
-    self.__init__(self.color, self.pieceInit, self.name)
+    self.__init__(self.color, self.pieceInit, self.name, self.DEPTH)
+  
+  def randomPiece(self, allyPieces, virusProb):
+    linkProb = 1 - virusProb
+    # # count no of link and virus
+    v, l = 0, 0
+    for i in range(len(allyPieces)):
+      if allyPieces[i].name == 'virus': v += 1
+      if allyPieces[i].name == 'link': l += 1
+    
+    # set probability of each piece being chosen
+    pieceProb = []
+    for i in range(len(allyPieces)):
+      # 40% chance to pick virus
+      if allyPieces[i].name == 'virus': pieceProb.append(virusProb/v)
+      # 60% chance to pick link
+      elif allyPieces[i].name == 'link': pieceProb.append(linkProb/l)
+    pieceProb = np.array(pieceProb)
+    pieceProb /= pieceProb.sum()
+    # print(game.turn, '|', game.player.name, '|', len(allyPieces), '|', len(pieceProb), pieceProb)
+    
+    # random choose a piece
+    piece = np.random.choice(allyPieces, p=pieceProb)
+    
+    return piece
   
   def findRandomMove(self, validMoves):
     return validMoves[random.randint(0, len(validMoves)-1)]
@@ -27,91 +51,58 @@ class Recursion(Player):
     }
     return decisions
   
-  # def findBestMove(self, game, validMoves, depth):
-  #   self.bestMove = self.Search(game, validMoves, depth)
-  
+  def findBestMove(self, game):
+    score = self.Search(game, self.DEPTH)
+    # score = self.SearchAlphaBeta(game, self.DEPTH, alpha=50, beta=-50)
+    return score
+    
   def selfToMove(self, game):
     return self.color == game.player.color
   
   def Search(self, game, depth: int):
-    if depth == 0: return 0
-    maxScore = 0.5 # target score
+    if depth == 0: return scoreBoard(game)
+    maxScore = -20
     
     validMoves = game.getValidMoves()
+    random.shuffle(validMoves)
     for move in validMoves:
+      # make move
       piece = move.pieceMoved
       game.board.move(game, piece, move)
-      score = -self.scoreBoard(game)
-      print(move.moveID, '->', score, maxScore, score > maxScore)
-      
+      game.clearValidMoves()
+      # search next game state
+      score = -self.Search(game, depth - 1)
       if score > maxScore:
         maxScore = score
-        self.bestMove = move
-      
+        if depth == self.DEPTH:
+          self.bestMove = move
       game.board.undoMove(game)
+    
     game.clearValidMoves()
+    return maxScore
+  
+  def SearchAlphaBeta(self, game, depth: int, alpha: int, beta: int):
+    if depth == 0: return scoreBoard(game)
+    maxScore = -40
+    
+    validMoves = game.getValidMoves()
+    random.shuffle(validMoves)
+    for move in validMoves:
+      # make move
+      piece = move.pieceMoved
+      game.board.move(game, piece, move)
+      game.clearValidMoves()
+      # search next game state
+      score = -self.SearchAlphaBeta(game, depth - 1, -beta, -alpha)
+      if score >= maxScore:
+        maxScore = score
+        if depth == self.DEPTH:
+          self.bestMove = move
+      game.board.undoMove(game)
+      if maxScore > alpha:
+        alpha = maxScore
+      if alpha >= beta:
+        break
       
-  def scoreBoard(self, game):
-    '''
-    `Current player view`
-    '''
-    winner = game.checkGameOver()
-    if winner is not None and winner == self.name: return 100
-    elif winner is not None and winner != self.name: return -100
-    
-    return self.scoreMaterial(game)
-  
-  def scoreMaterial(self, game):
-    '''
-    information can be collected
-    - self piece enter server
-    - self piece is captured?
-    - enemy piece enter server?
-    '''
-    enemy_Link_eat = game.enemy.link_eat
-    enemy_Virus_eat =  game.enemy.virus_eat
-    # only know the total no of entered piece
-    enemyEnter =  game.enemy.link_enter +  game.enemy.virus_enter
-   
-    score = 0
-    
-    score += PIECEVALUE['unknown'] * (game.player.virus_eat + game.player.link_eat) / 2
-    
-    # virus should not enter server
-    score -= PIECEVALUE['virus'] * 2 * game.player.virus_enter
-    score += PIECEVALUE['link'] * game.player.link_enter
-    
-    # lose combat power to capture piece
-    score -= PIECEVALUE['virus'] / 1.5 * enemy_Virus_eat
-    score -= PIECEVALUE['link'] * 2 * enemy_Link_eat
-    
-    # assume enemy always enter Link
-    score -= PIECEVALUE['link'] * enemyEnter
-    
-    return score
-  
-  def Distance(self, game, startRow, startCol, targetRow, targetCol):
-    if game.view == 'blue': dR = BROW[targetRow] - startRow
-    else: dR = targetRow - startRow
-    dC = targetCol - startCol
-    
-    return int(math.sqrt(dR**2 + dC**2))
-  
-  def distanceToExit(self, game, startRow, startCol):
-    Exit1, Exit2 = EXITPOS[self.color]
-    row0, col0 = Exit1  # col 3
-    row1, col1 = Exit2  # col 4
-    # check Exit1
-    if startCol <= col0:
-      if game.view == 'blue': dR = BROW[row0] - startRow
-      else: dR = row0 - startRow
-      dC = col0 - startCol
-    # check Exit2
-    elif startCol >= col1:
-      if game.view == 'blue': dR = BROW[row1] - startRow
-      else: dR = row1 - startRow
-      dC = col1 - startCol
-    
-    return int(math.sqrt(dR**2 + dC**2))
-  
-  
+    game.clearValidMoves()
+    return maxScore

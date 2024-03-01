@@ -11,15 +11,16 @@ if __name__ == '__main__':
   blueInit = 'llvvvvll'
   
   # Human
-  Yellow = Player('yellow', yellowInit, name='Kaito')
-  # Blue = Player('blue', blueInit, name='Amadeus')
+  # Yellow = Player('yellow', yellowInit, name='Okabe')
+  # Blue = Player('blue', blueInit, name='Daru')
   
   # random choose a piece move to Exit
-  # Yellow = RamdomMove('yellow', blueInit, name='Okabe', mode='Exit', virusProb=0.1)
+  # Yellow = RamdomMove('yellow', yellowInit, name='Okabe', mode='Exit', virusProb=0.1)
   # Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.4)
   
   # test 
-  Blue = Recursion('blue', blueInit)
+  Yellow = Recursion('yellow', yellowInit, name='Okabe', depth=3)
+  Blue = Recursion('blue', blueInit, name='Daru', depth=3)
   
-  main = Main(Yellow, Blue, view='blue', cheat=False)
+  main = Main(Yellow, Blue, view='yellow', cheat=False)
   main.Gback()

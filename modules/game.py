@@ -396,6 +396,7 @@ class Game:
     if len(self.gamelog) != 0:
       last_key = list(self.gamelog)[-1]
       last_value = self.gamelog[last_key]
+      self.clearValidMoves()
       
       # uninstall terminal card
       if last_value in SKILLS:

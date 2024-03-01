@@ -73,7 +73,7 @@ PIECEVALUE = {
   # 'link' : Decimal(2.0),
   # 'virus' : Decimal(1.0),
   # 'unknown' : Decimal(1.5)
-  'link' : 2.0,
-  'virus' : 1.0,
-  'unknown' : 1.5
+  'link' : 10,
+  'virus' : 10,
+  'unknown' : 10
 }

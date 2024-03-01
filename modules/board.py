@@ -94,7 +94,7 @@ class Board:
     # clear valid moves
     game.clearValidMoves()
     
-    game.message = f'{game.player.name} Moved: {move.getNotation()}'
+    game.message = f'{game.player.name} Moved: {move.moveID}'
     game.movelog[game.turn] = move
     game.gamelog[game.turn] = move
     game.nextPlayer()
