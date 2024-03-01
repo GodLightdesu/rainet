@@ -305,7 +305,6 @@ class Main:
           # move
           else:
             score = game.player.findBestMove(game)
-            print(game.player.name + '\'s score :', score)
             
             if game.player.bestMove is None:
               validMoves = game.getValidMoves()
@@ -314,7 +313,6 @@ class Main:
               game.clearValidMoves()
             
             else:
-              print('bestMove:', game.player.bestMove.moveID)
               game.move = game.player.bestMove
               game.clearValidMoves()
             

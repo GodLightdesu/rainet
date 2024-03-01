@@ -13,6 +13,7 @@ class Recursion(Player):
     self.isHuman = False
     self.DEPTH = depth
     self.bestMove = None
+    self.counter = 0 
     
   def reset(self):
     self.__init__(self.color, self.pieceInit, self.name, self.DEPTH)
@@ -52,14 +53,22 @@ class Recursion(Player):
     return decisions
   
   def findBestMove(self, game):
-    score = self.Search(game, self.DEPTH)
-    # score = self.SearchAlphaBeta(game, self.DEPTH, alpha=50, beta=-50)
+    self.counter = 0 
+    # score = self.Search(game, self.DEPTH)
+    score = self.SearchAlphaBeta(game, self.DEPTH, alpha=-WINNINGSCORE, beta=WINNINGSCORE)
+    print('-------------------------------------')
+    print('Depth:', self.DEPTH)
+    print('Evaluated:', self.counter, 'moves')
+    print('bestMove:', self.bestMove.moveID)
+    print(self.name + '\'s score :', score)
+    print('-------------------------------------')
     return score
     
   def selfToMove(self, game):
     return self.color == game.player.color
   
   def Search(self, game, depth: int):
+    self.counter += 1
     if depth == 0: return scoreBoard(game)
     maxScore = -20
     
@@ -76,14 +85,16 @@ class Recursion(Player):
         maxScore = score
         if depth == self.DEPTH:
           self.bestMove = move
+          print(game.player.name + ':', move.moveID, score)
       game.board.undoMove(game)
     
     game.clearValidMoves()
     return maxScore
   
   def SearchAlphaBeta(self, game, depth: int, alpha: int, beta: int):
+    self.counter += 1
     if depth == 0: return scoreBoard(game)
-    maxScore = -40
+    maxScore = -WINNINGSCORE
     
     validMoves = game.getValidMoves()
     random.shuffle(validMoves)
@@ -94,11 +105,14 @@ class Recursion(Player):
       game.clearValidMoves()
       # search next game state
       score = -self.SearchAlphaBeta(game, depth - 1, -beta, -alpha)
-      if score >= maxScore:
+      if score > maxScore:
         maxScore = score
         if depth == self.DEPTH:
           self.bestMove = move
+          print(game.player.name + ':', move.moveID, score)
       game.board.undoMove(game)
+      
+      # pruning
       if maxScore > alpha:
         alpha = maxScore
       if alpha >= beta:
