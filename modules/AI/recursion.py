@@ -63,7 +63,7 @@ class Recursion(Player):
       'skill': None
     }
     actions = ['lb', 'fw', 'vc', '404', 'move']
-    lbProb = 0.75 if not self.skills['lb']['used'] else 0.00
+    lbProb = 0.7 if not self.skills['lb']['used'] else 0.01
     fwProb = 0.0
     vcProb = 0.1
     # 404
