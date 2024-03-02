@@ -171,7 +171,7 @@ class Recursion(Player):
         if depth == self.DEPTH:
           self.bestMove = move
           print(game.player.name + ':', move.moveID, score)
-        return beta
+        return score
       # find a new best move
       if score > alpha:
         alpha = score
