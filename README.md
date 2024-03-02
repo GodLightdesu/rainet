@@ -9,7 +9,7 @@ Learning python for interest, hope I can add a AI engine in the future
 ### AI
 
 * `RandomMove`
-  <!-- *  -->
+* `Recursion`
 
 ## File structure
 
