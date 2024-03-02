@@ -29,20 +29,22 @@ class RamdomMove(Player):
     self.virusProb = 1 - linkProb
     self.linkProb = linkProb
   
-  def decision(self, game: object, validMoves: list, allyPiece: list):
+  def decision(self, game: object):
     decisions = {
       'move': None,
       'skill': None
     }
+    allyPieces = game.board.getAllyPieces(game.player.color)
+    validMoves = game.getValidMoves()
+    
     # not used lb, random select a piece to install
     if not self.skills['lb']['used']:
-      piece = self.randomPiece(allyPiece, self.virusProb, self.linkProb)
+      piece = self.randomPiece(allyPieces, self.virusProb, self.linkProb)
       decisions['skill'] = ['lb', piece]
-    
     # used lb, move
-    elif self.mode == 'Exit': decisions['move'] = self.findMoveToExit(game, validMoves, allyPiece)
+    elif self.mode == 'Exit': decisions['move'] = self.findMoveToExit(game, validMoves, allyPieces)
     elif self.mode == 'Random': decisions['move'] = self.findRandomMove(validMoves)
-    
+    game.clearValidMoves()
     return decisions
 
   def randomPiece(self, allyPieces, virusProb, linkProb):

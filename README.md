@@ -66,7 +66,7 @@ if __name__ == '__main__':
   Blue = Recursion('blue', blueInit, name='Daru', depth=4)
   
   # random choose a piece move to Exit
-  # Yellow = RamdomMove('yellow', yellowInit, name='Okabe', mode='Exit', virusProb=0.1)
+  # Yellow = RamdomMove('yellow', yellowInit, name='Okabe', mode='Random', virusProb=0.4)
   # Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.4)
   
   main = Main (Yellow, Blue, view='yellow', cheat=False)
