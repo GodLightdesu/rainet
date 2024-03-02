@@ -73,8 +73,8 @@ def scoreMaterial(game):
     else: score -= PIECEVALUE['unknown']
   
   # pieces ate (will cause cheating?)
-  score -= (PIECEVALUE['link'] * game.enemy.link_eat)/10
-  score += (PIECEVALUE['virus'] * game.enemy.virus_eat)/10
+  score -= (PIECEVALUE['link'] * game.enemy.link_eat) * 3
+  score += (PIECEVALUE['virus'] * game.enemy.virus_eat)
   
   # score += PIECEVALUE['unknown'] * 10 * (game.player.link_eat + game.player.virus_eat)
   
@@ -82,7 +82,7 @@ def scoreMaterial(game):
   # print(game.enemy.name + ' serverStack:', end=' ')
   for piece in game.enemy.serverStack:
     # print(piece.name, end=' ')
-    if piece.name == 'link': score += PIECEVALUE['link']
+    if piece.name == 'link': score += PIECEVALUE['link'] * 3
     elif piece.name == 'virus': score -= PIECEVALUE['virus'] * 1.5
   # print()
   
@@ -91,7 +91,7 @@ def scoreMaterial(game):
     # print(piece.name, end=' ')
     if piece.checked and piece.name == 'virus': score += PIECEVALUE['virus'] * 1.5
     # assume enemy will enter link
-    else: score -= PIECEVALUE['link']
+    else: score -= PIECEVALUE['link'] * 3
   # print()
   
   # bouns of link's dis to exit
@@ -100,7 +100,7 @@ def scoreMaterial(game):
     startRow, startCol = game.board.findPiecePos(piece)
     if game.view == 'blue': startRow = BROW[startRow]
     dis = distanceToExit(game, game.player.color, startRow, startCol)
-    score += (10 - dis)
+    score += (10 - dis) * 3
   
   
   random.shuffle(enemyPieces)
@@ -108,7 +108,7 @@ def scoreMaterial(game):
     startRow, startCol = game.board.findPiecePos(piece)
     if game.view == 'blue': startRow = BROW[startRow]
     dis = distanceToExit(game, game.enemy.color, startRow, startCol)
-    score -= (10 - dis)
+    score -= (10 - dis) * 3
   
   # bouns of virus's dis to enemy pieces
   for piece in allyPieces:
@@ -121,8 +121,8 @@ def scoreMaterial(game):
       dst = Distance(game, startRow, startCol, endRow, endCol)
       if dst < dMin: dst = dMin
       if ePiece.checked and ePiece.name == 'link': linkFound = True
-    if linkFound: score += (10 - dMin) * 7
-    else: score += (10 - dMin) * 4
+    if linkFound: score += (10 - dMin) * 1.5
+    else: score += (10 - dMin)
   
   for piece in enemyPieces:
     dMin = 7
@@ -134,8 +134,8 @@ def scoreMaterial(game):
       dst = Distance(game, startRow, startCol, endRow, endCol)
       if dst < dMin: dst = dMin
       if ePiece.checked and ePiece.name == 'link': linkFound = True
-    if linkFound: score -= (10 - dMin) * 7
-    else: score -= (10 - dMin) * 4
+    if linkFound: score -= (10 - dMin) * 1.5
+    else: score -= (10 - dMin)
   
   # print(game.player.name + '\'s score :', score)
   return score
