@@ -7,20 +7,17 @@ from modules.AI.recursion import Recursion
 
 # run game
 if __name__ == '__main__':
+  # use random piece init from database
   yellowInit = battleArraies[random.randint(0, len(battleArraies)-1)]
   blueInit = battleArraies[random.randint(0, len(battleArraies)-1)]
   
-  # Human
+  # verse AI that search the future steps
   Yellow = Player('yellow', yellowInit, name='Okabe')
-  # Blue = Player('blue', blueInit, name='Daru')
+  Blue = Recursion('blue', blueInit, name='Daru', depth=4)
   
   # random choose a piece move to Exit
   # Yellow = RamdomMove('yellow', yellowInit, name='Okabe', mode='Exit', virusProb=0.1)
   # Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.4)
-  
-  # test 
-  # Yellow = Recursion('yellow', yellowInit, name='Okabe', depth=4)
-  Blue = Recursion('blue', blueInit, name='Daru', depth=4)
   
   main = Main (Yellow, Blue, view='yellow', cheat=False)
   main.Gback()

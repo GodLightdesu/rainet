@@ -16,11 +16,14 @@ Learning python for interest, hope I can add a AI engine in the future
 ```bash
 ├── assets
 │   ├── font
-│   └── images
+│   ├── images
 │   └── screenshots
 ├── modules
 │   ├── AI
-│   │   └── Okabe.py
+│   │   ├── BattleArray.py
+│   │   ├── randomAI.py
+│   │   ├── recursion.py
+│   │   └── 阵型筛选器.xlsx
 │   ├── board.py
 │   ├── clicker.py
 │   ├── const.py
@@ -30,7 +33,8 @@ Learning python for interest, hope I can add a AI engine in the future
 │   ├── piece.py
 │   ├── player.py
 │   ├── skill.py
-│   └── square.py
+│   ├── square.py
+│   └── utils.py
 ├── Rai-Net.py
 ```
 
@@ -44,6 +48,8 @@ libraries stored at folder `/modules/`;
 
 `pygame`
 
+`numpy` -> not must
+
 ### Executing program
 
 start by simpely running `Rai-Net.py`
@@ -51,17 +57,19 @@ start by simpely running `Rai-Net.py`
 ```python
 # run game
 if __name__ == '__main__':
+  # use random piece init from database
+  yellowInit = battleArraies[random.randint(0, len(battleArraies)-1)]
+  blueInit = battleArraies[random.randint(0, len(battleArraies)-1)]
   
-  # 'vvllllvv'
-  yellowInit = 'llvvvvll'
-  blueInit = 'vvllllvv'
+  # verse AI that search the future steps
+  Yellow = Player('yellow', yellowInit, name='Okabe')
+  Blue = Recursion('blue', blueInit, name='Daru', depth=4)
   
-  # random move AI
-  player1 = RamdomMove('yellow', yellowInit, name='Okabe', mode='Random') 
   # random choose a piece move to Exit
-  player2 = RamdomMove('blue', blueInit, name='Daruu', mode='Exit')
+  # Yellow = RamdomMove('yellow', yellowInit, name='Okabe', mode='Exit', virusProb=0.1)
+  # Blue = RamdomMove('blue', blueInit, name='Daruu', mode='Exit', virusProb=0.4)
   
-  main = Main(player1, player2, view='blue', cheat=True)
+  main = Main (Yellow, Blue, view='yellow', cheat=False)
   main.Gback()
 ```
 
@@ -106,6 +114,8 @@ if __name__ == '__main__':
 ## Acknowledgments
 
 Inspiration, code snippets, images source, etc.
+
+[雷net联机对战群](https://tieba.baidu.com/p/7218028207)
 
 [Coding Spot](https://www.youtube.com/watch?v=OpL0Gcfn4B4&t=15084P)
 
